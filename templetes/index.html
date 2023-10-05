@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="decription" content="">
+  <meta property="og.title" content="{{playingAudio.title}}">
+  <meta property="og.image" content="https://img.youtube.com/vi/{{VideoId}}/maxresdefault.jpg">
+  <title>YouTube Mp3</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/style.css'%}">
+  <link rel="icon" type="image/x-icon" href="{% static 'files/icon.png'%}">
+
+  <style>
+    button{
+      border: none !important;
+    }
+    .side_actions {
+      width: 50px;
+      height: 100%;
+      position: absolute;
+      right: -50px;
+      top: 0px;
+      margin: auto;
+    }
+
+    
+    .search_buttons a{
+      display: none;
+      
+    }
+    
+    #SearchForurl:hover span{
+      color: #7be70e !important;
+      transition: all 0.2s;
+    }
+    .fornt_Image{
+      box-shadow: #7be70e red blue lime yellow cyan;
+    }
+
+    
+
+    @media only screen and (max-width: 680px) {
+      .fornt_Image {
+        height: 75% !important;
+        width: 95%;
+        left: -39px;
+      }
+
+      .side_actions {
+        right: -30px !important;
+        -webkit-backdrop-filter: blur(0px);
+        backdrop-filter: blur(0px);
+
+      }
+      .phone_rounded_thumbnail{
+        -webkit-backdrop-filter: blur(5px);
+        backdrop-filter: blur(5px);
+      }
+      .playlistBox {
+        max-width: 170px;
+      }
+
+      .phone_rounded_thumbnail {
+        box-sizing: border-box;
+        position: absolute;
+        top: 0%;
+        left: 50%;
+        transform: translate(-50%, -0%);
+        width: 100%;
+        height: 80%;
+        background: rgb(0, 225, 255);
+        background-position: center center;
+        background-size: cover;      
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding:3px;
+      }
+      .phone_rounded_thumbnail img{
+        width: 100%;
+        height:100%;
+      }
+    }
+
+    @media only screen and (max-width: 300px) {
+      .fornt_Image {
+        height: 88% !important;
+        width: 95%;
+        left: -39px;
+      }
+
+      .side_actions {
+        right: -30px !important;
+        -webkit-backdrop-filter: blur(0px);
+        backdrop-filter: blur(0px);
+
+      }
+
+      .playlistBox {
+        max-width: 130px;
+      }
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div id="backImag" class="thumbnailBox1"  style="background-image: {% if VideoId %} url('https://img.youtube.com/vi/{{VideoId}}/maxresdefault.jpg'); {% else %} url('{% static 'files/back.jpg'%}'); {% endif %} background-size:cover;background-position:center center;">
+
+
+
+    <div class="m-3 m-auto backCardImage overflow-hidden" style="height:100vh">
+      <div class="row">
+        <div class="col">
+         
+          <!-- Creating a search bar for search a video from youtube video or with video-Id  -->
+          <div class="row m-1">
+
+            
+            <div class="row m-0 p-0">
+              <div class="col-auto me-auto"><img src="{% static 'files/icon.png'%}" width="30px" height="30px" alt=""></div>
+              <div class="col p-0">
+                <input id="searchUrlsource" type="search" name="watch" class="form-control" style="background: #ffffff3d !important;
+                  color: #09310a !IMPORTANT;" id="watch" placeholder="www.youtube.com ">
+                  <label for="watch" class="link-text" id="searchError"></label>
+              </div>
+              <div class="col-auto px-2 d-flex justify-content-center align-items-center" style="height:fit-content !important;">
+                <!-- <input id="SearchForurl" class="btn btn-primary" type="button" value="Play Mp3"> -->
+                <a role="button" id="SearchForurl" class="mx-1"><span class="bi bi-search-heart fs-3 text-white"></span></a>
+
+                <style>
+                  #userProfile:hover img {
+                    transform: scale(1.1);
+  
+                  }
+                </style>
+
+                {% if request.user.is_authenticated %}
+                    <a role="button" title="{{request.user.username}}" id="userProfile" style="width:30px;height:30px;" class="hover-zoom-2 rounded-circle overflow-hidden"><img
+                        src="{% static 'files/user.png'%}" style="width: 100%;height:100%;" alt="..."
+                        class=" bg-primary hover"></a>
+                {% else %}
+                    <a href="/login" id="userProfile" style="width:30px;height:30px;" title="Login/Singup" class="hover-zoom-2 overflow-hidden"><img style="width: 100%;height:100%;" src="{% static 'files/user.png'%}"
+                         alt="..."></a>
+                {% endif %}
+
+              </div>
+            </div>
+          </div>
+          
+          <div class="card text-center backCard mx-5 my-2 position-absolute bottom-0 d-flex justify-content-end pt-1 fornt_Image">
+
+            <style>
+              .sideMenuShortcuts div div {
+                cursor: pointer;
+                background: rgba(0, 0, 0, 0);
+                transition: all 0.5s;
+                border-top-right-radius: 0px !important;
+                border-bottom-right-radius: 0px !important;
+              }
+
+              .sideMenuShortcuts div div span {
+                margin-left: 10px;
+                font-size: 20px;
+                transition: all 0.5s;
+                color: white;
+
+              }
+
+              .sideMenuShortcuts div div i {
+                font-size: 20px;
+                transition: all 0.5s;
+                color: white;
+
+              }
+
+              .sideMenuShortcuts div div button,
+              .sideMenuShortcuts div a {
+                width: 50px;
+                height: 45px;
+                cursor: pointer;
+                overflow: hidden;
+                -webkit-backdrop-filter: blur(5px);
+                backdrop-filter: blur(5px);
+                transition: all 0.5s;
+              }
+
+              .sideMenuShortcuts div div:hover {
+                border: 1px solid rgb(0, 203, 253)!important;
+              }
+
+              .sideMenuShortcuts div div:hover button,
+              .sideMenuShortcuts div  div:hover a {
+                right: 100px;
+                transform: scale(1.3);
+                color: rgb(6, 182, 144);
+                
+              }
+
+              .sideMenuShortcuts::-webkit-scrollbar {
+                display: none;
+              }
+            </style>
+
+            <div class="backCardImage overflow-auto side_actions sideMenuShortcuts">
+              <div class="d-flex flex-column ">
+                <div class="card my-4 mt-3"><button data-bs-target="#exampleModalTogglesaved" data-bs-toggle="modal" class="btn backCardImage"><i class="bi bi-list"></i> <span>Related</span></button></div>
+                <div class="card my-4"><button id="issavedtolocalvideo" data-bs-target="#exampleModalTogglesavedvideo" data-bs-toggle="modal" class="btn backCardImage"><i class="bi bi-film"></i> <span>videos</span></button></div>
+                <div class="card my-4"><button onclick="SharePage()" class="btn backCardImage"><i class="bi bi-share-fill"></i> <span>Share</span></button></div>
+                <div class="card my-4 {% if not VideoId %} d-none {% endif %}"><button id="issavedtolocal"  class="btn backCardImage"><i class="bi bi-heart"></i> <span>Saved</span></button></div>
+                <div class="card my-4 {% if not VideoId %} d-none {% endif %}"><a id="downloadNowbtn"   href="{{playingAudio.url}}&filename={{playingAudio.title}}.mp3" download="{{playingAudio.url}}&filename={{playingAudio.title}}.mp3" class="btn backCardImage" ><i class="bi bi-box-arrow-down"></i><span>Download</span> </a></div>
+
+              </div>
+            </div>
+
+            <div style="box-sizing: border-box;" class="phone_rounded_thumbnail">
+              <img id="thumbnailBox" {% if VideoId %} src='https://img.youtube.com/vi/{{VideoId}}/maxresdefault.jpg'{% else %} src ='{% static 'files/back.jpg'%}'   width="55%" {% endif %} width="68%" alt="">
+            </div>
+
+            
+            <!-- playing audio statuc progressbar carrunt time total time  -->
+            <div class="row m-0 p-0">
+              <style>
+                input[type="range"] {
+                  -webkit-appearance: none;
+                  margin-right: 15px;
+
+                  height: 7px;
+                  background: rgba(255, 255, 255, 0.336);
+                  border-radius: 5px;
+                  background-image: linear-gradient(#09310a, #09310a);
+                  background-size: 0% 100%;
+                  background-repeat: no-repeat;
+                  cursor: pointer !important;
+
+                }
+
+                input[type="range"]::-webkit-slider-thumb {
+                  -webkit-appearance: none;
+                  cursor: pointer !important;
+                  height: 15px;
+                  width: 15px;
+                  border-radius: 50%;
+                  background: #09310a;
+                  cursor: ew-resize;
+                  box-shadow: 0 0 2px 0 #555;
+                  transition: background .3s ease-in-out;
+                }
+
+                input[type=range]::-webkit-slider-runnable-track {
+                  -webkit-appearance: none;
+                  box-shadow: none;
+                  border: none;
+                  background: transparent;
+                  cursor: pointer !important;
+                }
+              </style>
+              
+              <div class="col-auto me-auto"><span id="currentTime" class="text-primary">00:00</span>
+              </div>
+              
+              <div class="col p-0">
+                <input type="range" name="" id="ProcessMeter" min="0" max="100" value="0" class="w-100">
+
+              </div>
+              <div class="col-auto px-2">
+                <span id="totalTime" class="text-primary">00:00</span>
+              </div>
+            </div>
+            <!--  -->
+
+            <!-- Playing audio controls Next/Previous volume play/Puase -->
+            <div class="row d-flex justify-content-center align-item-center">
+              <div class="col ">
+                {% if isPlaylist %}
+                <div class="spinner-grow" role="status">
+                  <span class="sr-only"></span>
+                </div>
+                <button id="LoadList" class="btn d-none disabledBtns" {% if not isPlaylist %}disabled
+                  style="border:none !important" {% endif %} data-bs-target="#exampleModalToggle"
+                  data-bs-toggle="modal"><i class="bi bi-music-note-list fs-3 text-primary"></i>
+
+                  {% else %}
+                  <button id="LoadList" class="btn disabledBtns" {% if not isPlaylist %}disabled
+                    style="border:none !important" {% endif %} data-bs-target="#exampleModalToggle"
+                    data-bs-toggle="modal"><i class="bi bi-music-note-list fs-3 text-primary"></i>
+
+                    {% endif %}
+
+
+              </div>
+
+              {% comment %} <div class="col"><button class="btn"><i
+                    class="bi bi-skip-backward-circle fs-3 text-primary"></i></i>
+              </div> {% endcomment %}
+
+              <div class="col"><button id="NextBtn" class="btn disabledBtns" {% if not isPlaylist %}disabled style="border:none !important;transform: rotate(180deg);" {% else %}style="transform: rotate(180deg);" {% endif %}><i class="bi bi-fast-forward-circle fs-3 text-primary"></i></i></button></div>
+              <div class="col"><button id="PlayButton" class="btn" {% if not VideoId %}disabled style="border:none !important" {% endif %}><i class="bi bi-play-circle fs-3 text-primary"></i></button></div>
+              <div class="col"><button id="PreBtn" class="btn disabledBtns" {% if not isPlaylist %}disabled style="border:none !important" {% endif %}><i class="bi bi-fast-forward-circle fs-3 text-primary"></i></button></div>
+
+
+              {% comment %} <div class="col"><button class="btn"><i
+                    class="bi bi-fast-forward-circle fs-3 text-primary"></i></button>
+              </div> {% endcomment %}
+
+              <style>
+                .custom-range::-webkit-slider-thumb {
+                  background: gray !important;
+                }
+
+                .custom-range::-moz-range-thumb {
+                  background: gray !important;
+                }
+
+                .custom-range::-ms-thumb {
+                  background: gray !important;
+                }
+              </style>
+                           
+              <div class="col d-flex justify-content-center align-items-center" style="position: relative;">
+                <button class="btn" id="volumecontrolbtn" ><i class="bi bi-soundwave fs-2 text-primary" style="font-weight: bolder;"></i><sub id="volumecontrolstatus" class="text-primary"> 50%</sub></button>
+
+                <div class="position-absolute" style="top:-10px;right:50px;width: 150px;height: 30px;">
+                <input type="range" name="volumecontrol" min="0" max="100" backgound-size="50% 100%" value="50" id="volumecontrol" class="custom-range d-none">
+
+                </div>
+
+
+              <script>
+                
+              </script>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+      <div class="col-md-auto"></div>
+    </div>
+
+  </div>
+
+
+  <!-- Modal for list video for quick play -->
+  <div class="modal fade backCardImage" id="exampleModalToggle" aria-hidden="true"
+    aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content" id="modalBackImg">
+        <div class="modal-header backCardImage">
+          <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+          <div class="row w-100">
+            <div class="col">
+              <h1 class="modal-title fs-6 text-white" id="playlistTitle">Lorem ipsum dolor sit amet
+                consecteturadipisicing elit.</h1>
+              <p class="card-text text-white" id="playlisLenght"></p>
+              <p class="card-text text-white" id="playlisView"></p>
+            </div>
+            <div class="col text-end">
+              <img id="playlistThumbnail" src="https://i.ytimg.com/vi/LQ1-F3OsX4A/sddefault.jpg" style="width: 250px;"
+                alt="">
+
+            </div>
+          </div>
+        </div>
+        <div class="modal-body p-0 m-0">
+          <div class="d-flex justify-content-start align-item-start flex-wrap backCardImage" id="insertPlaylistVideo">
+
+            <!-- Inserting playlist video from a single video -->
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for list saved video for quick play -->
+  <div class="modal fade backCardImage" id="exampleModalTogglesavedvideo" aria-hidden="true"
+    aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content" id="modalBackImgsavedvideo" style="background-image:url('{% static 'files/back.jpg'%}')">
+        <div class="modal-header backCardImage">
+          <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+          <div class="row w-100">
+            <div class="col">
+              <h1 class="modal-title fs-6 text-white fs-1" id="playlistTitlesavedvideo">Your Saved videos</h1>
+              <p class="card-text text-white mt-3 fs-4" id="playlisLenghtsavedvideo"></p>
+              <p class="card-text text-white" id="playlisViewsavedvideo"></p>
+            </div>
+            <div class="col text-end">
+              <img id="playlistThumbnailsavedvideo" src="{% static 'files/back.jpg'%}" style="width: 250px;"
+                alt="">
+
+            </div>
+          </div>
+        </div>
+        <div class="modal-body p-0 m-0">
+          <div class="d-flex justify-content-start align-item-start flex-wrap backCardImage" id="insertPlaylistVideosavedvideo">
+
+            <!-- Inserting playlist video from a single video -->
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for list video for quick play -->
+  <div class="modal fade backCardImage" id="exampleModalTogglesaved" aria-hidden="true"
+    aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content" id="modalBackImgsaved" style="background-image:url('{% static 'files/back.jpg'%}')">
+        <div class="modal-header backCardImage">
+          <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+          <div class="row w-100">
+            <div class="col">
+              <h1 class="modal-title fs-6 text-white fs-1" id="playlistTitlesaved">Auto Saved Playlists</h1>
+              <p class="card-text text-white mt-3 fs-4" id="playlisLenghtsaved"></p>
+              <p class="card-text text-white" id="playlisViewsaved"></p>
+            </div>
+            <div class="col text-end">
+              <img id="playlistThumbnailsaved" src="{% static 'files/back.jpg'%}" style="width: 250px;"
+                alt="">
+
+            </div>
+          </div>
+        </div>
+        <div class="modal-body p-0 m-0">
+          <div class="d-flex justify-content-start align-item-start flex-wrap backCardImage" id="insertPlaylistVideosaved">
+
+            <!-- Inserting playlist video from a single video -->
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- -----------------------  Scripting Links  ---------------------------------------------------------- -->
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+    integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+    crossorigin="anonymous"></script>
+
+  <!-- <script src="https://code.jquery.com/jquery-3.7.1.js"></script> -->
+  <script src="{% static 'js/code.jquery.com_jquery-3.7.1.js'%}"></script>
+  <script src="{% static 'js/main.js'%}"></script>
+
+  <script>
+    
+  </script>
+
+</body>
+
+</html>
