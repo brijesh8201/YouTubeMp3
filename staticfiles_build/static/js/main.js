@@ -177,9 +177,10 @@ let LoadPlaylistDataInPLaylistBox = (playlistUrls) => {
   playlisView.innerHTML = `Views: ${abbreviateNumber(playlistUrls['Views'])}`
   playlisLenght.innerHTML = `Length: ${playlistUrls['length']}`
   playlistTitle.innerHTML = playlistUrls['title']
-
+  console.log('loading playlist thumbmail..')
   playlistThumbnail.src = `https://img.youtube.com/vi/${GetVideoId(playlistUrls['Urls'][0])}/maxresdefault.jpg`
-
+  
+  console.log('inserting playlist video in to playlist modalbox')
   // Inserting playlist video into playlist box
   InsertPLaylistVideosFromList(playlistUrls['Urls'])
 
@@ -205,12 +206,15 @@ let GetVideoId = (url) => {
 }
 
 let InsertPLaylistVideosFromList = (urls) => {
+
   playlistId = GetUrlParams('list')
   let strVideotheme = ``
   // modalBackImg.style.backgroundImage = `url('https://img.youtube.com/vi/${GetVideoId(urls[0])}/maxresdefault.jpg$')`
   CurrentPlayingSongsList = {}
+  console.log('itrating playlist video for modalbox')
   for (let index = 0; index < Object.keys(urls).length; index++) {
     const element = urls[index];
+    console.log("PLaylist video:",element)
     CurrentPlayingSongsList[index] = `https://www.youtube.com/watch?v=${GetVideoId(element)}`
 
     if (index == 0) {
@@ -622,12 +626,14 @@ let LoadLocalPlaylist = async () => {
       $(() => {
         // function will get executed  
         // on click of submit button 
+        console.log("submiting playlist for extraction")
         $.ajax({
           type: "POST",
           url: url,
           data: dataurls,
           success: function (data) {
             let playlistUrls = JSON.parse(data)
+            console.log("This is the playlist extracted urls ",playlistUrls)
             LoadPlaylistDataInPLaylistBox(playlistUrls)
           },
           error: function (data) {
