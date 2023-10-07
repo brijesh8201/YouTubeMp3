@@ -3,7 +3,7 @@ from urllib.parse import urlparse, parse_qs
 from contextlib import suppress
 
 import yt_dlp
-import json
+import json,re
 from pytube import YouTube, Playlist
 # Create your views here.
 
@@ -94,7 +94,6 @@ def get_yt_id(url, ignore_playlist=False):
         if query.path[:3] == '/v/': return query.path.split('/')[2]
    # returns None for invalid YouTube url
 
-
 # @csrf_exempt
 def ExtractPlaylistVideos(request):
     dataUrls = {}
@@ -105,6 +104,7 @@ def ExtractPlaylistVideos(request):
         playlistId = request.POST.get('videoid')
         print("Video id  ",playlistId) #https://www.youtube.com/playlist?list=PL9bw4S5ePsEEqCMJSiYZ-KTtEjzVy0YvK
         PlaylistVideos = Playlist(url=f"https://www.youtube.com/watch?list={playlistId}")
+        PlaylistVideos._video_regex = re.compile(r"\"url\":\"(/watch\?v=[\w-]*)")
         print("Video id  ",PlaylistVideos)
         
         VideoUrls =  PlaylistVideos.video_urls if len(PlaylistVideos)>0 else []
@@ -117,7 +117,6 @@ def ExtractPlaylistVideos(request):
         dataUrls['length'] = PlaylistVideos.length if len(PlaylistVideos)>0 else '' 
         dataUrls['Views'] = PlaylistVideos.views if len(PlaylistVideos)>0 else '' 
         dataUrls['Urls'] = data
-        print(dataUrls)
         return HttpResponse(json.dumps(dataUrls))
 
     return HttpResponse(json.dumps(dataUrls))
