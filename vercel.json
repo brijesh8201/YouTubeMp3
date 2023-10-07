@@ -21,7 +21,7 @@
       },
       {
         "src": "/(.*)",
-        "dest": "poll/wsgi.py"
+        "dest": "youtubemp3/wsgi.py"
       }
     ]
   }
