@@ -622,7 +622,8 @@ let LoadLocalPlaylist = async () => {
 
       var url = '/playlist/';
       let TokenCsrf = document.querySelector('input[name="csrfmiddlewaretoken"]')
-      let dataurls = { 'videoid': GetUrlParams('list'), 'csrfmiddlewaretoken': TokenCsrf.value }
+      let dataurls = { 'videoid': GetPlaylistId('list'), 'csrfmiddlewaretoken': TokenCsrf.value }
+      console.log('dataurls for extracting playlist videos : ',dataurls)
 
       $(() => {
         // function will get executed  
