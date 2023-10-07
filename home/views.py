@@ -103,8 +103,8 @@ def ExtractPlaylistVideos(request):
     if request.method=="POST":
 
         playlistId = request.POST.get('videoid')
-        print("Video id  ",playlistId)
-        PlaylistVideos = Playlist(url=f"https://www.youtube.com/playlist?list={playlistId}")
+        print("Video id  ",playlistId) #https://www.youtube.com/playlist?list=PL9bw4S5ePsEEqCMJSiYZ-KTtEjzVy0YvK
+        PlaylistVideos = Playlist(url=f"https://www.youtube.com/watch?list={playlistId}")
         print("Video id  ",PlaylistVideos)
         
         VideoUrls =  PlaylistVideos.video_urls if len(PlaylistVideos)>0 else []
