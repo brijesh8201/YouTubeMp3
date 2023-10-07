@@ -173,6 +173,7 @@ let GetUrlParams = (param) => {
 }
 
 
+
 let LoadPlaylistDataInPLaylistBox = (playlistUrls) => {
   playlisView.innerHTML = `Views: ${abbreviateNumber(playlistUrls['Views'])}`
   playlisLenght.innerHTML = `Length: ${playlistUrls['length']}`
