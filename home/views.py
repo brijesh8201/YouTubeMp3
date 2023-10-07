@@ -1,4 +1,4 @@
-from django.shortcuts import render,HttpResponse,
+from django.shortcuts import render,HttpResponse
 from urllib.parse import urlparse, parse_qs
 from contextlib import suppress
 
