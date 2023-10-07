@@ -5,11 +5,7 @@ body{
   overflow: hidden;
 }
 
-.text-primary{
-  color:#09310a !important;
-  /* color:#922800 !important; */
-  border: none !important;
-}
+
 
 #watch{
   background-color: transparent!important;

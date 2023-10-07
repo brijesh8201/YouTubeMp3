@@ -10,7 +10,7 @@ let playlistThumbnail = document.getElementById('playlistThumbnail')
 let playlistTitle = document.getElementById('playlistTitle')
 let playlisLenght = document.getElementById('playlisLenght')
 let playlisView = document.getElementById('playlisView')
-let insertPlaylistVideo = document.getElementById('insertPlaylistVideo')
+let insertPlayingPlaylistVideo = document.getElementById('insertPlayingPlaylistVideo')
 let modalBackImg = document.getElementById('modalBackImg')
 let backImag = document.getElementById('backImag')
 let thumbnailBox = document.getElementById('thumbnailBox')
@@ -24,62 +24,73 @@ let playlisLenghtsaved = document.getElementById('playlisLenghtsaved')
 let playlisViewsaved = document.getElementById('playlisViewsaved')
 let modalBackImgsaved = document.getElementById('modalBackImgsaved')
 let playlistThumbnailsaved = document.getElementById('playlistThumbnailsaved')
-let insertPlaylistVideosaved = document.getElementById('insertPlaylistVideosaved')
+let insertSavedPlaylistInBox = document.getElementById('insertSavedPlaylistInBox')
 let volumecontrolstatus = document.getElementById('volumecontrolstatus')
 let issavedtolocal = document.getElementById('issavedtolocal')
-let insertPlaylistVideosavedvideo = document.getElementById('insertPlaylistVideosavedvideo')
+let insertFaveroitePlaylistVideo = document.getElementById('insertFaveroitePlaylistVideo')
 let playlisLenghtsavedvideo = document.getElementById('playlisLenghtsavedvideo')
+let shareTitle = document.getElementById('shareTitle')
+let ShareImage = document.getElementById('ShareImage')
 
-console.log(AudioConnector)
+let shortHistory = document.getElementById('shortHistory')
+let shortfaveroite = document.getElementById('shortfaveroite')
+let shortShare = document.getElementById('shortShare')
+let downloadNowbtn = document.getElementById('downloadNowbtn')
+let VolumeControlBox = document.getElementById('VolumeControlBox')
+let preSkipBtn = document.getElementById('preSkipBtn')
+let nextSkipBtn = document.getElementById('nextSkipBtn')
+
+
+
 
 PlayButton.style.border = 'none !important'
 let RangeInterval = 0
 let CurrentPlayingSongsList = {}
 let CurrentPlayingSongsListIndex = -1
 
-// volumecontrol.style.backgroundSize = `50% 100%`
-// AudioConnector.volume = 0.5
-// let volumecontrolbtn = document.getElementById('volumecontrolbtn')
-// let volumecontrols = document.getElementById('volumecontrol')
-// volumecontrols.style.backgroundSize = '50% 100%'
+volumecontrol.style.backgroundSize = `50% 100%`
+AudioConnector.volume = 0.5
+let volumecontrolbtn = document.getElementById('volumecontrolbtn')
+let volumecontrols = document.getElementById('volumecontrol')
+volumecontrols.style.backgroundSize = '50% 100%'
 
-// volumecontrolbtn.addEventListener('click', (event) => {
+volumecontrolbtn.addEventListener('click', (event) => {
 
-//   if (volumecontrols.classList.contains('d-none')) {
-//     volumecontrols.classList.remove('d-none')
-//     console.log("remove")
-//   }
-//   else {
-//     volumecontrols.classList.add('d-none')
-//     console.log("add")
+  if (VolumeControlBox.classList.contains('d-none')) {
+    VolumeControlBox.classList.remove('d-none')
+    volumecontrol.focus()
 
-//   }
+  }
+  else {
+    VolumeControlBox.classList.add('d-none')
 
-// })
+  }
 
-// let volumecontrolrange = document.getElementById('volumecontrol')
-// let volumecontrolbtns = document.getElementById('volumecontrolbtn')
+})
+volumecontrol.addEventListener('focusout', () => {
+  VolumeControlBox.classList.add('d-none')
+})
 
-// volumecontrolrange.addEventListener('focusout', CheckFocus)
-// // < !--volumecontrolbtns.addEventListener('focusout', CheckFocus) -->
-
-// function CheckFocus(event) {
-
-//   volumecontrolrange.classList.add('d-none')
-// }
 
 
 NextBtn.addEventListener('click', Nextsong)
 PreBtn.addEventListener('click', Presong)
+preSkipBtn.addEventListener('click', SkipeNext)
+nextSkipBtn.addEventListener('click', SkiptPre)
+
 
 
 
 AudioConnector.onplay = (event) => {
-  PlayButton.innerHTML = '<i class="bi bi-pause-circle fs-3 text-primary"></i>'
+  PlayButton.innerHTML = '<i class="bi bi-pause-circle fs-2 text-primary"></i>'
   GetRange()
 }
 
 let convertIntoMinuts = (seconds) => {
+  if (seconds == NaN || seconds == 0) {
+    return '00:00'
+  }
+
   let hour = Math.floor(seconds / 3600)
   seconds = seconds % 3600;
   let minutes = Math.floor(seconds / 60);
@@ -92,12 +103,13 @@ let convertIntoMinuts = (seconds) => {
     times = `${hour}:${minutes}:${extraSeconds.split('.')[0]}`
 
   }
-
   return times
+
+
 }
 
 AudioConnector.onpause = (event) => {
-  PlayButton.innerHTML = '<i class="bi bi-play-circle fs-3 text-primary"></i>'
+  PlayButton.innerHTML = '<i class="bi bi-play-circle fs-2 text-primary"></i>'
 }
 
 PlayButton.addEventListener('click', (event) => {
@@ -105,50 +117,54 @@ PlayButton.addEventListener('click', (event) => {
     AudioConnector.play()
   }
   else {
-
     AudioConnector.pause()
   }
 })
 
 let GetRange = () => {
 
+  if (AudioConnector.readyState) {
 
-  RangeInterval = setInterval(() => {
-    totalTime.innerHTML = convertIntoMinuts(AudioConnector.duration)
-    let done = (AudioConnector.currentTime * 100) / AudioConnector.duration
 
-    ProcessMeter.style.backgroundSize = `${done + 0.1}% 100%`
-    ProcessMeter.value = done
+    RangeInterval = setInterval(() => {
+      totalTime.innerHTML = convertIntoMinuts(AudioConnector.duration)
+      let done = (AudioConnector.currentTime * 100) / AudioConnector.duration
 
-    currentTime.innerHTML = convertIntoMinuts(AudioConnector.currentTime)
+      ProcessMeter.style.backgroundSize = `${done + 0.1}% 100%`
+      ProcessMeter.value = done
 
-    if (AudioConnector.ended) {
-      clearInterval(RangeInterval)
-      Nextsong()
+      currentTime.innerHTML = convertIntoMinuts(AudioConnector.currentTime)
 
-    }
-  }, 1000);
+      if (AudioConnector.ended && !AudioConnector.paused) {
+        clearInterval(RangeInterval)
+        if (GetUrlParams('list') != undefined || GetUrlParams('list') != null || GetUrlParams('list') != none) {
+          Nextsong()
+        }
+
+      }
+    }, 1000);
+  }
 }
 
 ProcessMeter.addEventListener('input', (event) => {
   AudioConnector.currentTime = (AudioConnector.duration * ProcessMeter.value) / 100
-  GetRange()
+
 })
 
 
-let SetVolumeStatus = () => {
-
-
-}
 
 volumecontrol.addEventListener('input', (event) => {
-
+  // 
   volume = volumecontrol.value / 100
-  volumecontrolstatus.innerHTML = " " + volumecontrol.value + "%"
+
+  volumecontrolstatus.innerHTML = `${volumecontrol.value}%`
   volumecontrol.style.backgroundSize = `${volume * 100}% 100%`
   AudioConnector.volume = volume
-
 })
+
+// volumecontrol.addEventListener('change',()=>{
+//     volumecontrolbtns.innerHTML = '<i class="bi bi-soundwave fs-2 text-primary" style="font-weight: bolder;"></i>'
+// })
 
 let GetUrlParams = (param) => {
   const queryString = window.location.search;
@@ -180,14 +196,11 @@ let LoadPlaylistDataInPLaylistBox = (playlistUrls) => {
 }
 
 let GetVideoId = (url) => {
-  if (url != undefined) {
-    var videoURL = url;
-    var splited = videoURL.split("v=");
-    var splitedAgain = splited[1].split("&");
-    var videoId = splitedAgain[0];
-    return videoId
-  }
-  return none
+  var videoURL = url;
+  var splited = videoURL.split("v=");
+  var splitedAgain = splited[1].split("&");
+  var videoId = splitedAgain[0];
+  return videoId
 
 }
 
@@ -206,11 +219,11 @@ let InsertPLaylistVideosFromList = (urls) => {
     }
 
     strVideotheme += `<div class='d-flex justify-content-center m-auto playlistBox' ><span class='text-white'>${index + 1}. </span><a href="/watch?v=${GetVideoId(element)}&list=${playlistId}" class="card m-auto my-1" style="width:18rem;">
-     <img  src="https://img.youtube.com/vi/${GetVideoId(element)}/maxresdefault.jpg" class="card-img-top" alt="...">
-      
-    </a></div>`
+   <img  src="https://img.youtube.com/vi/${GetVideoId(element)}/maxresdefault.jpg" class="card-img-top" alt="...">
+    
+  </a></div>`
   }
-  insertPlaylistVideo.innerHTML = strVideotheme
+  insertPlayingPlaylistVideo.innerHTML = strVideotheme
 }
 
 function Nextsong() {
@@ -226,16 +239,28 @@ function Presong() {
   SendLoadRequest(videoID)
 }
 
+function SkiptPre() {
+  AudioConnector.currentTime = ((AudioConnector.duration * ProcessMeter.value) / 100) + 10
+
+
+}
+
+function SkipeNext() {
+  AudioConnector.currentTime = ((AudioConnector.duration * ProcessMeter.value) / 100) - 10
+}
+
 function SendLoadRequest(videoID) {
   var url = '/newsong/';
 
   PlayButton.innerHTML = `<div class="spinner-grow text-primary" role="status"><span class="visually-hidden"></span></div>`
 
   PlayButton.setAttribute('disabled', 'true')
+  let TokenCsrf = document.querySelector('input[name="csrfmiddlewaretoken"]')
+  let dataurls = { 'url': videoID, 'csrfmiddlewaretoken': TokenCsrf.value }
   $.ajax({
     type: "POST",
     url: url,
-    data: { 'url': videoID },
+    data: dataurls,
 
     success: function (data) {
       let playlistUrls = JSON.parse(data)
@@ -246,7 +271,7 @@ function SendLoadRequest(videoID) {
     },
     error: function (data) {
 
-      PlayButton.innerHTML = '<i class="bi fs-3 ">😫</i>'
+      PlayButton.innerHTML = '<i class="bi fs-2 ">😫</i>'
       // Some error in ajax call
     }
   });
@@ -265,6 +290,12 @@ let LoadNewSong = (url, videoId, title, filename) => {
   downloadNowbtn.href = url
   downloadNowbtn.download = url + '&filename=' + filename
   AudioConnector.play()
+  shareTitle.setAttribute('content', title)
+  ShareImage.setAttribute('content', `https://img.youtube.com/vi/${GetVideoId(videoId)}/maxresdefault.jpg`)
+  nextSkipBtn.removeAttribute('disabled')
+  PreBtn.removeAttribute('disabled')
+  preSkipBtn.removeAttribute('disabled')
+  NextBtn.removeAttribute('disabled')
 
 }
 
@@ -289,14 +320,15 @@ async function SharePage() {
 
   const shareData = {
     title: document.title,
-    text: "Learn web development on MDN!",
+    text: shareTitle.getAttribute('content'),
     url: window.location.href,
-    image: `https://img.youtube.com/vi/${GetUrlParams('v')}/maxresdefault.jpg')`
+    image: ShareImage.getAttribute('content')
   };
 
   try {
     await navigator.share(shareData);
   } catch (err) {
+    console.log(err)
   }
 
 
@@ -380,42 +412,49 @@ let GetSaved = () => {
 }
 
 issavedtolocal.addEventListener('click', () => {
+
   let playlistData = JSON.parse(localStorage.getItem('saved'))
   let saveToVideoId = GetUrlParams('v')
 
-  if (saveToVideoId in playlistData) {
+  if (Object.keys(playlistData).includes(saveToVideoId)) {
+    console.log(playlistData)
     DeleteSaved(saveToVideoId)
-    issavedtolocal.innerHTML = '<i class="bi bi-heart"></i>'
-
+    issavedtolocal.innerHTML = '<i class="bi bi-heart"></i> <span>Save</span>'
   }
   else {
+    console.log("new created")
     let youtubemp3Saveurl = `https://www.youtube.com/watch?v=${saveToVideoId}`
     CreateLocalSaved(saveToVideoId, youtubemp3Saveurl)
-    issavedtolocal.innerHTML = '<i class="bi bi-heart-fill text-danger"></i>'
+    issavedtolocal.innerHTML = '<i class="bi bi-heart-fill text-danger"></i><span>Saved</span>'
   }
-  inserSavedVideoInPlaylist()
+
+  insetFaveroiteVideoInBox()
+
 
 })
 
 
 function checckIsSaved() {
+  if (localStorage.getItem('saved') == null) {
+    localStorage.setItem('saved', JSON.stringify({}))
+  }
+
   let saveToVideoId = GetUrlParams('v')
   let playlistData = JSON.parse(localStorage.getItem('saved'))
+  savedKeys = Object.keys(playlistData)
 
-  if (saveToVideoId in playlistData) {
-    issavedtolocal.innerHTML = '<i class="bi bi-heart-fill text-danger"></i>'
+  if (savedKeys.includes(saveToVideoId)) {
+    issavedtolocal.innerHTML = '<i class="bi bi-heart-fill text-danger"></i> <span>Saved</span>'
   }
 }
 
-let inserSavedVideoInPlaylist = () => {
+let insetFaveroiteVideoInBox = () => {
   let savedVideodata = GetSaved()
   let strVideotheme = ``
   playlisLenghtsavedvideo.innerHTML = 'Length : ' + Object.keys(savedVideodata).length + " videos"
 
   for (let index = 0; index < Object.keys(savedVideodata).length; index++) {
     const element = savedVideodata[Object.keys(savedVideodata)[index]];
-    console.log(element)
-    CurrentPlayingSongsList[index] = `https://www.youtube.com/watch?v=${GetVideoId(element)}`
 
     if (index == 0) {
       modalBackImg.style.backgroundImage = `url('https://img.youtube.com/vi/${GetVideoId(element)}/maxresdefault.jpg')`
@@ -423,11 +462,11 @@ let inserSavedVideoInPlaylist = () => {
     }
 
     strVideotheme += `<div class='d-flex justify-content-center m-auto playlistBox' ><span class='text-white'>${index + 1}. </span><a href="/watch?v=${GetVideoId(element)}" class="card m-auto my-1" style="width:18rem;">
-     <img  src="https://img.youtube.com/vi/${GetVideoId(element)}/maxresdefault.jpg" class="card-img-top" alt="...">
-      
-    </a></div>`
+   <img  src="https://img.youtube.com/vi/${GetVideoId(element)}/maxresdefault.jpg" class="card-img-top" alt="...">
+    
+  </a></div>`
   }
-  insertPlaylistVideosavedvideo.innerHTML = strVideotheme
+  insertFaveroitePlaylistVideo.innerHTML = strVideotheme
 
 }
 
@@ -468,14 +507,22 @@ function youtube_playlist_parser(url) {
 
 }
 
+let GetPlaylistId = (url) => {
+  playlistId = String(url).split('list=')
+  console.log(playlistId)
+  return playlistId[1]
+}
+
 SearchForurl.addEventListener('click', (event) => {
   let OrUrl = searchUrlsource.value
   let YoutubeUrl = '/watch?'
   let Is_valid = false
 
-  if (String(OrUrl).includes('list=')) {
-    let playlistId = youtube_playlist_parser(OrUrl)
 
+  if (String(OrUrl).includes('list=')) {
+    // let playlistId = youtube_playlist_parser(OrUrl)
+    playlistId = GetPlaylistId(OrUrl)
+    console.log(playlistId)
     YoutubeUrl = YoutubeUrl + 'list=' + playlistId
 
     if (String(OrUrl).includes('v=')) {
@@ -500,7 +547,7 @@ SearchForurl.addEventListener('click', (event) => {
   }
   else {
     searchUrlsource.style.border = '1px solid crimson'
-    searchError.innerHTML = 'Invailid URL | Enter a valid YouTube video or playlist url'
+    searchError.innerHTML = 'Invailid URL | YouTube video or playlist'
     searchError.style.color = 'crimson'
     searchError.style.display = 'block'
     setTimeout(() => {
@@ -537,15 +584,15 @@ function ShowSavedPlaylist() {
         TotalVideos = TotalVideos + countvideos
 
         savedplaylistStr += `<div class='d-flex justify-content-center m-auto playlistBox' ><span class='text-white'>${index + 1}. </span><a href="/watch?v=${videoId}&list=${savedKeys[index]}" class="card m-auto my-1 text-truncate" style="width:18rem;text-decoration:none;background-image:url('https://img.youtube.com/vi/${videoId}/maxresdefault.jpg')">
-      <img  src="https://img.youtube.com/vi/${videoId}/maxresdefault.jpg" class="card-img-top" alt="...">
-       <span class="playlistTitle text-truncate px-1" style="color: #00ffe5 !important;background: #0000006e;">${title}<P class="text-white my-0 py-0">Length : ${countvideos} Videos</P></span>
-     </a></div>`
+    <img  src="https://img.youtube.com/vi/${videoId}/maxresdefault.jpg" class="card-img-top" alt="...">
+     <span class="playlistTitle text-truncate px-1" style="color: #00ffe5 !important;background: #0000006e;">${title}<P class="text-white my-0 py-0">Length : ${countvideos} Videos</P></span>
+   </a></div>`
         //  #00f3ff #00ff90 00fff8
       }
 
     }
     playlisViewsaved.innerHTML = `Count : ${TotalVideos} videos`
-    insertPlaylistVideosaved.innerHTML = savedplaylistStr;
+    insertSavedPlaylistInBox.innerHTML = savedplaylistStr;
   }
 
 
@@ -568,29 +615,32 @@ let LoadLocalPlaylist = async () => {
 
     if (GetPlaylit(GetUrlParams('list')) == undefined) {
 
-      $(() => {
+      var url = '/playlist/';
+      let TokenCsrf = document.querySelector('input[name="csrfmiddlewaretoken"]')
+      let dataurls = { 'videoid': GetUrlParams('list'), 'csrfmiddlewaretoken': TokenCsrf.value }
 
-        var url = '/playlist/';
+      $(() => {
+        // function will get executed  
+        // on click of submit button 
         $.ajax({
           type: "POST",
           url: url,
-          data: { 'videoid': GetUrlParams('list') },
-
+          data: dataurls,
           success: function (data) {
             let playlistUrls = JSON.parse(data)
-
             LoadPlaylistDataInPLaylistBox(playlistUrls)
-
-
           },
           error: function (data) {
-
+            // Some error in ajax call 
             // Some error in ajax call
-            alert("some Error");
+            LoadList.innerHTML = '<i class="bi fs-3 ">😫</i>'
           }
         });
 
-      })();
+      });
+
+
+
     }
     else {
       let CurrentPlaylistData = GetPlaylit(GetUrlParams('list'))
@@ -604,49 +654,87 @@ let LoadLocalPlaylist = async () => {
 
 
 
-window.onload = async () => {
-  await checckIsSaved()
-  await LoadFirstSong()
-  await LoadLocalPlaylist()
-  await ShowSavedPlaylist()
-  await inserSavedVideoInPlaylist()
-
-}
-
 let slowInternetTimeout = null;
 
 
 AudioConnector.addEventListener('waiting', () => {
   slowInternetTimeout = setTimeout(() => {
-      //show buffering
-      console.log('Buffering --1');
-      PlayButton.innerHTML = `<div class="spinner-grow text-danger" role="status"><span class="sr-only"></span></div>`
-
-      let done = (AudioConnector.currentTime * 100) / AudioConnector.duration
-      ProcessMeter.style.backgroundSize = `${done + 0.1}% 100%`
-      ProcessMeter.value = done
-
-      });
-  });
-
-  AudioConnector.addEventListener('playing', () => {
-  if(slowInternetTimeout != null){
-      clearTimeout(slowInternetTimeout);
-      slowInternetTimeout = null;
-      //continue playing
-      console.log('Play continues');
-      PlayButton.innerHTML = '<i class="bi bi-pause-circle fs-3 text-primary"></i>'
-      }
-  });
-
-
-  AudioConnector.addEventListener('loadstart', function () {
     //show buffering
-    console.log('Buffering --2');
-    PlayButton.innerHTML = `<div class="spinner-grow text-sucess" role="status"><span class="sr-only"></span></div>`
+    PlayButton.innerHTML = `<div class="spinner-grow text-danger" role="status"><span class="sr-only"></span></div>`
+
     
-    let done = (AudioConnector.currentTime * 100) / AudioConnector.duration
-    ProcessMeter.style.backgroundSize = `${done + 0.1}% 100%`
-    ProcessMeter.value = done
+
+  });
+});
+
+AudioConnector.addEventListener('playing', () => {
+  if (slowInternetTimeout != null) {
+    clearTimeout(slowInternetTimeout);
+    slowInternetTimeout = null;
+    PlayButton.innerHTML = '<i class="bi bi-pause-circle fs-2 text-primary"></i>'
+    GetRange()
+
+  }
+});
+
+
+AudioConnector.addEventListener('loadstart', function () {
+  //show buffering
+  PlayButton.innerHTML = `<div class="spinner-grow text-warning" role="status"><span class="sr-only"></span></div>`
+  AudioConnector.play()
+
+
+  ProcessMeter.value = 0
 
 });
+
+
+window.onload = async () => {
+  await checckIsSaved()
+  await LoadFirstSong()
+  await LoadLocalPlaylist()
+  await ShowSavedPlaylist()
+  await insetFaveroiteVideoInBox()
+
+}
+
+// ________________________________ Adding Keyboard Shortcuts __________________________________________//
+document.onkeyup = function (e) {
+
+  if (e.which == 32) {
+    PlayButton.click()
+  }
+  if (e.which == 78) {
+    NextBtn.click()
+  }
+  if (e.which == 66) {
+    PreBtn.click()
+  }
+  if (e.which == 13) {
+    SearchForurl.click()
+  }
+  if (e.shiftKey && e.which == 70) {
+    shortfaveroite.click()
+  }
+  if (e.shiftKey && e.which == 72) {
+    shortHistory.click()
+  }
+  if (e.shiftKey && e.which == 68) {
+    downloadNowbtn.click()
+  }
+  if (e.shiftKey && e.which == 76) {
+    issavedtolocal.click()
+  }
+  if (e.shiftKey && e.which == 86) {
+    shortShare.click()
+  }
+  if (e.shiftKey && e.which == 65) {
+    LoadList.click()
+  }
+};
+
+// shortHistory
+// shortfaveroite
+// shortShare
+// downloadNowbtn
+// issavedtolocal
