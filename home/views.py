@@ -2,9 +2,9 @@ from django.shortcuts import render,HttpResponse
 from urllib.parse import urlparse, parse_qs
 from contextlib import suppress
 
-import yt_dlp
-import json,re
-from pytube import YouTube, Playlist
+import yt_dlp,requests
+import json
+# from pytube import YouTube, Playlist
 # Create your views here.
 
 
@@ -95,28 +95,74 @@ def get_yt_id(url, ignore_playlist=False):
 
 # @csrf_exempt
 def ExtractPlaylistVideos(request):
-    dataUrls = {}
-    PlaylistVideos = []
+    # _-------------------------------------------- Methos First ----------------------------------------------
+    # dataUrls = {}
+    # PlaylistVideos = []
+    
+    # if request.method=="POST":
+
+    #     playlistId = request.POST.get('videoid')
+    #     print("Video id  ",playlistId) #https://www.youtube.com/playlist?list=PL9bw4S5ePsEEqCMJSiYZ-KTtEjzVy0YvK
+    #     PlaylistVideos = Playlist(url=f"https://www.youtube.com/watch?list={playlistId}")
+    #     PlaylistVideos._video_regex = re.compile(r"\"url\":\"(/watch\?v=[\w-]*)")
+    #     print("Video id  ",PlaylistVideos)
+        
+    #     VideoUrls =  PlaylistVideos.video_urls if len(PlaylistVideos)>0 else []
+
+    #     data = {}  
+    #     for i,item in enumerate(VideoUrls):
+    #         data[i] = item
+
+    #     dataUrls['title'] = PlaylistVideos.title if len(PlaylistVideos)>0 else '' 
+    #     dataUrls['length'] = PlaylistVideos.length if len(PlaylistVideos)>0 else '' 
+    #     dataUrls['Views'] = PlaylistVideos.views if len(PlaylistVideos)>0 else '' 
+    #     dataUrls['Urls'] = data
+    #     return HttpResponse(json.dumps(dataUrls))
+
+    # return HttpResponse(json.dumps(dataUrls))
+    
+    # _-------------------------------------------- Methos Second ----------------------------------------------
+    
+    mainContentData = {}
     
     if request.method=="POST":
-
-        playlistId = request.POST.get('videoid')
-        print("Video id  ",playlistId) #https://www.youtube.com/playlist?list=PL9bw4S5ePsEEqCMJSiYZ-KTtEjzVy0YvK
-        PlaylistVideos = Playlist(url=f"https://www.youtube.com/watch?list={playlistId}")
-        PlaylistVideos._video_regex = re.compile(r"\"url\":\"(/watch\?v=[\w-]*)")
-        print("Video id  ",PlaylistVideos)
         
-        VideoUrls =  PlaylistVideos.video_urls if len(PlaylistVideos)>0 else []
+        playlistid = request.POST.get('videoid')
 
-        data = {}  
-        for i,item in enumerate(VideoUrls):
-            data[i] = item
+        if playlistid!=None:
 
-        dataUrls['title'] = PlaylistVideos.title if len(PlaylistVideos)>0 else '' 
-        dataUrls['length'] = PlaylistVideos.length if len(PlaylistVideos)>0 else '' 
-        dataUrls['Views'] = PlaylistVideos.views if len(PlaylistVideos)>0 else '' 
-        dataUrls['Urls'] = data
-        return HttpResponse(json.dumps(dataUrls))
+            url = "https://youtube-search-and-download.p.rapidapi.com/playlist"
 
-    return HttpResponse(json.dumps(dataUrls))
+            querystring = {"id":playlistid}
+
+            headers = {
+                "X-RapidAPI-Key": "8cacaff4e4msh4fee6493b9185f4p1fec8cjsna481c4a0f8b0",
+                "X-RapidAPI-Host": "youtube-search-and-download.p.rapidapi.com"
+            }
+
+            response = requests.get(url, headers=headers, params=querystring)
+
+            urlData = response.json()
+
+            content = urlData.get('contents')
+            if len(content)>0:
+                    mainContentData['title'] = urlData.get('title')
+                    mainContentData['length'] = urlData.get('videosCount')
+                    mainContentData['Views'] = urlData.get('views')
+                    mainContentData['lastUpdated'] = urlData.get('lastUpdated')
+
+                    urlsDict = {}
+                    for i,item in enumerate(content):
+                        newVideo ={}
+                        Oldvideo = item.get('video')
+                        newVideo['title'] = Oldvideo.get('title')
+                        newVideo['url'] = 'https://www.youtube.com/watch?v='+Oldvideo.get('videoId')
+                        urlsDict[i] = newVideo
+                        
+                    mainContentData['Urls'] = urlsDict
+                    
+            return HttpResponse(json.dumps(mainContentData))          
+                    
+                
+    return HttpResponse(json.dumps(mainContentData))
         

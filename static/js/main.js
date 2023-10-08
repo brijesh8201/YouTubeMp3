@@ -22,6 +22,7 @@ let searchError = document.getElementById('searchError')
 let playlistTitlesaved = document.getElementById('playlistTitlesaved')
 let playlisLenghtsaved = document.getElementById('playlisLenghtsaved')
 let playlisViewsaved = document.getElementById('playlisViewsaved')
+let PlaylistlastUpdated = document.getElementById('PlaylistlastUpdated')
 let modalBackImgsaved = document.getElementById('modalBackImgsaved')
 let playlistThumbnailsaved = document.getElementById('playlistThumbnailsaved')
 let insertSavedPlaylistInBox = document.getElementById('insertSavedPlaylistInBox')
@@ -175,14 +176,16 @@ let GetUrlParams = (param) => {
 
 
 let LoadPlaylistDataInPLaylistBox = (playlistUrls) => {
-  playlisView.innerHTML = `Views: ${abbreviateNumber(playlistUrls['Views'])}`
+
+  playlisView.innerHTML = `Views: ${playlistUrls['Views']}`
   playlisLenght.innerHTML = `Length: ${playlistUrls['length']}`
   playlistTitle.innerHTML = playlistUrls['title']
-  console.log('loading playlist thumbmail..')
-  playlistThumbnail.src = `https://img.youtube.com/vi/${GetVideoId(playlistUrls['Urls'][0])}/maxresdefault.jpg`
+  PlaylistlastUpdated.innerHTML =`Last Update: `+playlistUrls['lastUpdated']
+
+  playlistThumbnail.src = `https://img.youtube.com/vi/${GetVideoId(playlistUrls['Urls'][0]['url'])}/maxresdefault.jpg`
   
-  console.log('inserting playlist video in to playlist modalbox')
-  // Inserting playlist video into playlist box
+  // console.log('inserting playlist video in to playlist modalbox')
+  // // Inserting playlist video into playlist box
   InsertPLaylistVideosFromList(playlistUrls['Urls'])
 
   for (let index = 0; index < disabledBtns.length; index++) {
@@ -210,23 +213,29 @@ let InsertPLaylistVideosFromList = (urls) => {
 
   playlistId = GetUrlParams('list')
   let strVideotheme = ``
-  // modalBackImg.style.backgroundImage = `url('https://img.youtube.com/vi/${GetVideoId(urls[0])}/maxresdefault.jpg$')`
+  modalBackImg.style.backgroundImage = `url('https://img.youtube.com/vi/${GetVideoId(urls[0]['url'])}/maxresdefault.jpg')`
+  console.log(`https://img.youtube.com/vi/${GetVideoId(urls[0]['url'])}/maxresdefault.jpg`)
+
   CurrentPlayingSongsList = {}
+
   console.log('itrating playlist video for modalbox')
+
   for (let index = 0; index < Object.keys(urls).length; index++) {
     const element = urls[index];
-    console.log("PLaylist video:",element)
-    CurrentPlayingSongsList[index] = `https://www.youtube.com/watch?v=${GetVideoId(element)}`
+    CurrentPlayingSongsList[index] = `https://www.youtube.com/watch?v=${GetVideoId(element['url'])}`
 
-    if (index == 0) {
-      modalBackImg.style.backgroundImage = `url('https://img.youtube.com/vi/${GetVideoId(element)}/maxresdefault.jpg')`
 
-    }
+    //  `<div class='d-flex justify-content-center m-auto playlistBox' ><span class='text-white'>${index + 1}. </span><a href="/watch?v=${GetVideoId(element['url'])}&list=${playlistId}" class="card m-auto my-1" style="width:18rem;">
+    //                   <img  src="https://img.youtube.com/vi/${GetVideoId(element['url'])}/maxresdefault.jpg" class="card-img-top" alt="...">
+                        
+    //                   </a></div>`
 
-    strVideotheme += `<div class='d-flex justify-content-center m-auto playlistBox' ><span class='text-white'>${index + 1}. </span><a href="/watch?v=${GetVideoId(element)}&list=${playlistId}" class="card m-auto my-1" style="width:18rem;">
-   <img  src="https://img.youtube.com/vi/${GetVideoId(element)}/maxresdefault.jpg" class="card-img-top" alt="...">
-    
-  </a></div>`
+      strVideotheme +=`<div class='d-flex justify-content-center m-auto playlistBox' ><span class='text-white'>${index + 1}. </span><a href="/watch?v=${GetVideoId(element['url'])}&list=${playlistId}" class="card m-auto my-1 text-truncate" style="width:18rem;text-decoration:none;background-image:url('https://img.youtube.com/vi/${GetVideoId(element['url'])}/maxresdefault.jpg')">
+                              <img  src="https://img.youtube.com/vi/${GetVideoId(element['url'])}/maxresdefault.jpg" class="card-img-top" alt="...">
+                              <span class="playlistTitle text-truncate px-1" style="color: #00ffe5 !important;background: #0000006e;">${element['title']}</span>
+                          </a></div>`
+  
+
   }
   insertPlayingPlaylistVideo.innerHTML = strVideotheme
 }
@@ -422,7 +431,7 @@ issavedtolocal.addEventListener('click', () => {
   let saveToVideoId = GetUrlParams('v')
 
   if (Object.keys(playlistData).includes(saveToVideoId)) {
-    console.log(playlistData)
+
     DeleteSaved(saveToVideoId)
     issavedtolocal.innerHTML = '<i class="bi bi-heart"></i> <span>Save</span>'
   }
@@ -457,14 +466,9 @@ let insetFaveroiteVideoInBox = () => {
   let savedVideodata = GetSaved()
   let strVideotheme = ``
   playlisLenghtsavedvideo.innerHTML = 'Length : ' + Object.keys(savedVideodata).length + " videos"
-
+  
   for (let index = 0; index < Object.keys(savedVideodata).length; index++) {
     const element = savedVideodata[Object.keys(savedVideodata)[index]];
-
-    if (index == 0) {
-      modalBackImg.style.backgroundImage = `url('https://img.youtube.com/vi/${GetVideoId(element)}/maxresdefault.jpg')`
-
-    }
 
     strVideotheme += `<div class='d-flex justify-content-center m-auto playlistBox' ><span class='text-white'>${index + 1}. </span><a href="/watch?v=${GetVideoId(element)}" class="card m-auto my-1" style="width:18rem;">
    <img  src="https://img.youtube.com/vi/${GetVideoId(element)}/maxresdefault.jpg" class="card-img-top" alt="...">
@@ -572,16 +576,19 @@ SearchForurl.addEventListener('click', (event) => {
 
 
 function ShowSavedPlaylist() {
+
   let savedplaylistStr = ``
   savedplaylist = JSON.parse(localStorage.getItem('playlist'))
   let TotalVideos = 0
+
   if (savedplaylist != undefined) {
     for (let index = 0; index < Object.keys(savedplaylist).length; index++) {
       savedKeys = Object.keys(savedplaylist)
       const element = savedplaylist[savedKeys[index]];
 
       let title = element['title']
-      let videoId = element['Urls'][0]
+      let videoId = element['Urls'][0]['url']
+
       if (videoId != undefined) {
         countvideos = Object.keys(element['Urls']).length
         playlisLenghtsaved.innerHTML = `Lenght : ${savedKeys.length} playlists`
@@ -589,9 +596,9 @@ function ShowSavedPlaylist() {
         TotalVideos = TotalVideos + countvideos
 
         savedplaylistStr += `<div class='d-flex justify-content-center m-auto playlistBox' ><span class='text-white'>${index + 1}. </span><a href="/watch?v=${videoId}&list=${savedKeys[index]}" class="card m-auto my-1 text-truncate" style="width:18rem;text-decoration:none;background-image:url('https://img.youtube.com/vi/${videoId}/maxresdefault.jpg')">
-    <img  src="https://img.youtube.com/vi/${videoId}/maxresdefault.jpg" class="card-img-top" alt="...">
-     <span class="playlistTitle text-truncate px-1" style="color: #00ffe5 !important;background: #0000006e;">${title}<P class="text-white my-0 py-0">Length : ${countvideos} Videos</P></span>
-   </a></div>`
+                              <img  src="https://img.youtube.com/vi/${videoId}/maxresdefault.jpg" class="card-img-top" alt="...">
+                              <span class="playlistTitle text-truncate px-1" style="color: #00ffe5 !important;background: #0000006e;">${title}<P class="text-white my-0 py-0">Length : ${countvideos} Videos</P></span>
+                            </a></div>`
         //  #00f3ff #00ff90 00fff8
       }
 
@@ -623,7 +630,6 @@ let LoadLocalPlaylist = async () => {
       var url = '/playlist/';
       let TokenCsrf = document.querySelector('input[name="csrfmiddlewaretoken"]')
       let dataurls = { 'videoid': GetUrlParams('list'), 'csrfmiddlewaretoken': TokenCsrf.value }
-      console.log('dataurls for extracting playlist videos : ',dataurls)
 
       $(() => {
         // function will get executed  
@@ -635,7 +641,6 @@ let LoadLocalPlaylist = async () => {
           data: dataurls,
           success: function (data) {
             let playlistUrls = JSON.parse(data)
-            console.log("This is the playlist extracted urls ",playlistUrls)
             LoadPlaylistDataInPLaylistBox(playlistUrls)
           },
           error: function (data) {
@@ -647,11 +652,10 @@ let LoadLocalPlaylist = async () => {
 
       });
 
-
-
     }
     else {
       let CurrentPlaylistData = GetPlaylit(GetUrlParams('list'))
+
       LoadPlaylistDataInPLaylistBox(CurrentPlaylistData)
 
     }
