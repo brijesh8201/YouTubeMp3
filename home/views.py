@@ -94,7 +94,9 @@ def get_yt_id(url, ignore_playlist=False):
    # returns None for invalid YouTube url
 
 # @csrf_exempt
+contentUrls = []
 def ExtractPlaylistVideos(request):
+    global contentUrls
     # _-------------------------------------------- Methos First ----------------------------------------------
     # dataUrls = {}
     # PlaylistVideos = []
@@ -122,29 +124,46 @@ def ExtractPlaylistVideos(request):
     # return HttpResponse(json.dumps(dataUrls))
     
     # _-------------------------------------------- Methos Second ----------------------------------------------
+    def GetNext(playlistid,next=None):
+        global contentUrls
+        
+        if next is None:
+            querystring = {"id":playlistid}
+        else:
+            querystring = {"id":playlistid,'next':next}
+
+        headers = {
+            "X-RapidAPI-Key": "8cacaff4e4msh4fee6493b9185f4p1fec8cjsna481c4a0f8b0",
+            "X-RapidAPI-Host": "youtube-search-and-download.p.rapidapi.com"
+        }
+
+        response =  requests.get(url, headers=headers, params=querystring)
+        urlData = response.json()
+        contentUrls = contentUrls+urlData.get('contents')
+
+        if urlData.get('next')!=None:
+            GetNext(playlistid=playlistid,next=urlData.get('next'))
+            
+        urlData['contents'] = contentUrls
+        return urlData
+    
     
     mainContentData = {}
     
     if request.method=="POST":
         
         playlistid = request.POST.get('videoid')
+        print("playlist id : ",playlistid)
 
         if playlistid!=None:
 
             url = "https://youtube-search-and-download.p.rapidapi.com/playlist"
-
-            querystring = {"id":playlistid}
-
-            headers = {
-                "X-RapidAPI-Key": "8cacaff4e4msh4fee6493b9185f4p1fec8cjsna481c4a0f8b0",
-                "X-RapidAPI-Host": "youtube-search-and-download.p.rapidapi.com"
-            }
-
-            response = requests.get(url, headers=headers, params=querystring)
-
-            urlData = response.json()
+            
+            urlData = GetNext(playlistid=playlistid)
 
             content = urlData.get('contents')
+            print("The len of content : ",len(content))
+            
             if len(content)>0:
                     mainContentData['title'] = urlData.get('title')
                     mainContentData['length'] = urlData.get('videosCount')
@@ -160,6 +179,7 @@ def ExtractPlaylistVideos(request):
                         urlsDict[i] = newVideo
                         
                     mainContentData['Urls'] = urlsDict
+            print(mainContentData)
                     
             return HttpResponse(json.dumps(mainContentData))          
                     

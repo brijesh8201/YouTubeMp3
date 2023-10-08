@@ -135,10 +135,13 @@ let GetRange = () => {
       ProcessMeter.value = done
 
       currentTime.innerHTML = convertIntoMinuts(AudioConnector.currentTime)
+      console.log('Is ended: ', AudioConnector.ended)
 
-      if (AudioConnector.ended && !AudioConnector.paused) {
+      if (AudioConnector.ended) {
+        console.log('checking next')
         clearInterval(RangeInterval)
         if (GetUrlParams('list') != undefined || GetUrlParams('list') != null || GetUrlParams('list') != none) {
+          console.log('playing next')
           Nextsong()
         }
 
@@ -180,10 +183,10 @@ let LoadPlaylistDataInPLaylistBox = (playlistUrls) => {
   playlisView.innerHTML = `Views: ${playlistUrls['Views']}`
   playlisLenght.innerHTML = `Length: ${playlistUrls['length']}`
   playlistTitle.innerHTML = playlistUrls['title']
-  PlaylistlastUpdated.innerHTML =`Last Update: `+playlistUrls['lastUpdated']
+  PlaylistlastUpdated.innerHTML = `Last Update: ` + playlistUrls['lastUpdated']
 
   playlistThumbnail.src = `https://img.youtube.com/vi/${GetVideoId(playlistUrls['Urls'][0]['url'])}/maxresdefault.jpg`
-  
+
   // console.log('inserting playlist video in to playlist modalbox')
   // // Inserting playlist video into playlist box
   InsertPLaylistVideosFromList(playlistUrls['Urls'])
@@ -202,6 +205,7 @@ let LoadPlaylistDataInPLaylistBox = (playlistUrls) => {
 
 let GetVideoId = (url) => {
   var videoURL = url;
+  console.log("error", url)
   var splited = videoURL.split("v=");
   var splitedAgain = splited[1].split("&");
   var videoId = splitedAgain[0];
@@ -214,7 +218,6 @@ let InsertPLaylistVideosFromList = (urls) => {
   playlistId = GetUrlParams('list')
   let strVideotheme = ``
   modalBackImg.style.backgroundImage = `url('https://img.youtube.com/vi/${GetVideoId(urls[0]['url'])}/maxresdefault.jpg')`
-  console.log(`https://img.youtube.com/vi/${GetVideoId(urls[0]['url'])}/maxresdefault.jpg`)
 
   CurrentPlayingSongsList = {}
 
@@ -227,30 +230,76 @@ let InsertPLaylistVideosFromList = (urls) => {
 
     //  `<div class='d-flex justify-content-center m-auto playlistBox' ><span class='text-white'>${index + 1}. </span><a href="/watch?v=${GetVideoId(element['url'])}&list=${playlistId}" class="card m-auto my-1" style="width:18rem;">
     //                   <img  src="https://img.youtube.com/vi/${GetVideoId(element['url'])}/maxresdefault.jpg" class="card-img-top" alt="...">
-                        
+
     //                   </a></div>`
 
-      strVideotheme +=`<div class='d-flex justify-content-center m-auto playlistBox' ><span class='text-white'>${index + 1}. </span><a href="/watch?v=${GetVideoId(element['url'])}&list=${playlistId}" class="card m-auto my-1 text-truncate" style="width:18rem;text-decoration:none;background-image:url('https://img.youtube.com/vi/${GetVideoId(element['url'])}/maxresdefault.jpg')">
+    strVideotheme += `<div class='d-flex justify-content-center m-auto playlistBox' ><span class='text-white'>${index + 1}. </span><a href="/watch?v=${GetVideoId(element['url'])}&list=${playlistId}" class="card m-auto my-1 text-truncate" style="width:18rem;text-decoration:none;background-image:url('https://img.youtube.com/vi/${GetVideoId(element['url'])}/maxresdefault.jpg')">
                               <img  src="https://img.youtube.com/vi/${GetVideoId(element['url'])}/maxresdefault.jpg" class="card-img-top" alt="...">
                               <span class="playlistTitle text-truncate px-1" style="color: #00ffe5 !important;background: #0000006e;">${element['title']}</span>
                           </a></div>`
-  
+
 
   }
   insertPlayingPlaylistVideo.innerHTML = strVideotheme
 }
 
-function Nextsong() {
-  CurrentPlayingSongsListIndex = (CurrentPlayingSongsListIndex + 1) % Object.keys(CurrentPlayingSongsList).length
-  VideoId = CurrentPlayingSongsList[CurrentPlayingSongsListIndex]
-  SendLoadRequest(VideoId)
+function replaceUrlParam(index,id) {
+  
+  let Currenturl = window.location.href
+  console.log(Currenturl)
+  let newUrl = String(Currenturl).split('?')[1].split('&')
 
+  let URL = {}
+  for (i = 0; i <= newUrl.length; i++) {
+    url = String(newUrl[i]).split('=')
+    URL[url[0]] = url[1]
+  }
+
+  URL['index'] =index 
+  URL['v'] = id
+
+  let keys = Object.keys(URL)
+
+  let odlUrl = Currenturl.split('?')[0]
+
+  for (i = 0; i <= keys.length; i++) {
+
+    if (URL[keys[i]] == undefined) {
+      continue
+    }
+
+    if (i == 0) {
+      odlUrl += `?${keys[i]}=${URL[keys[i]]}`
+    }
+    console.log(URL[keys[i]])
+    odlUrl += '&' + keys[i] + '=' + URL[keys[i]]
+
+  }
+  window.location.href = odlUrl
+}
+
+function Nextsong() {
+  let index = GetUrlParams('index')
+  if (index == null || index == undefined) {
+    index = 0
+  }
+  index = (Number.parseInt(index) + 1) % Object.keys(CurrentPlayingSongsList).length
+  VideoId = CurrentPlayingSongsList[index]
+
+  let NewUrl = replaceUrlParam(index,GetVideoId(VideoId))
 }
 
 function Presong() {
-  CurrentPlayingSongsListIndex = (CurrentPlayingSongsListIndex - 1 + Object.keys(CurrentPlayingSongsList).length) % Object.keys(CurrentPlayingSongsList).length
-  videoID = CurrentPlayingSongsList[CurrentPlayingSongsListIndex]
-  SendLoadRequest(videoID)
+  let index = GetUrlParams('index')
+  if (index == null || index == undefined) {
+    index = 0
+  }
+
+  index = (index - 1 + Object.keys(CurrentPlayingSongsList).length) % Object.keys(CurrentPlayingSongsList).length
+  videoID = CurrentPlayingSongsList[index]
+  // SendLoadRequest(videoID)
+  let NewUrl = replaceUrlParam(index,GetVideoId(videoID))
+
 }
 
 function SkiptPre() {
@@ -308,8 +357,7 @@ let LoadNewSong = (url, videoId, title, filename) => {
   ShareImage.setAttribute('content', `https://img.youtube.com/vi/${GetVideoId(videoId)}/maxresdefault.jpg`)
   nextSkipBtn.removeAttribute('disabled')
   PreBtn.removeAttribute('disabled')
-  preSkipBtn.removeAttribute('disabled')
-  NextBtn.removeAttribute('disabled')
+  
 
 }
 
@@ -331,7 +379,6 @@ function abbreviateNumber(value) {
 }
 
 async function SharePage() {
-  document.getElementById('shareUrl').textContent = window.location.href
 
   const shareData = {
     title: document.title,
@@ -467,7 +514,7 @@ let insetFaveroiteVideoInBox = () => {
   let savedVideodata = GetSaved()
   let strVideotheme = ``
   playlisLenghtsavedvideo.innerHTML = 'Length : ' + Object.keys(savedVideodata).length + " videos"
-  
+
   for (let index = 0; index < Object.keys(savedVideodata).length; index++) {
     const element = savedVideodata[Object.keys(savedVideodata)[index]];
 
@@ -645,8 +692,6 @@ let LoadLocalPlaylist = async () => {
             LoadPlaylistDataInPLaylistBox(playlistUrls)
           },
           error: function (data) {
-            // Some error in ajax call 
-            // Some error in ajax call
             LoadList.innerHTML = '<i class="bi fs-3 ">😫</i>'
           }
         });
@@ -665,8 +710,6 @@ let LoadLocalPlaylist = async () => {
 
 }
 
-
-
 let slowInternetTimeout = null;
 
 
@@ -675,7 +718,7 @@ AudioConnector.addEventListener('waiting', () => {
     //show buffering
     PlayButton.innerHTML = `<div class="spinner-grow text-danger" role="status"><span class="sr-only"></span></div>`
 
-    
+
 
   });
 });
@@ -702,13 +745,15 @@ AudioConnector.addEventListener('loadstart', function () {
 });
 
 
+
+
+
 window.onload = async () => {
   await checckIsSaved()
   await LoadFirstSong()
   await LoadLocalPlaylist()
   await ShowSavedPlaylist()
   await insetFaveroiteVideoInBox()
-  document.getElementById('shareUrl').textContent=window.location.href
 
 }
 
