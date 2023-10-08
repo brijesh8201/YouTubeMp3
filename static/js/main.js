@@ -336,7 +336,7 @@ async function SharePage() {
     title: document.title,
     text: shareTitle.getAttribute('content'),
     url: window.location.href,
-    image: ShareImage.getAttribute('content')
+    file: ShareImage.getAttribute('content')
   };
 
   try {
