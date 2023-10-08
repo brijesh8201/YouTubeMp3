@@ -331,6 +331,7 @@ function abbreviateNumber(value) {
 }
 
 async function SharePage() {
+  document.getElementById('shareUrl').textContent = window.location.href
 
   const shareData = {
     title: document.title,
@@ -707,6 +708,7 @@ window.onload = async () => {
   await LoadLocalPlaylist()
   await ShowSavedPlaylist()
   await insetFaveroiteVideoInBox()
+  document.getElementById('shareUrl').textContent=window.location.href
 
 }
 
