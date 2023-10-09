@@ -142,9 +142,9 @@ def ExtractPlaylistVideos(request):
         urlData = response.json()
         contentUrls = contentUrls+urlData.get('contents')
 
-        # print(urlData)  
-        # if urlData.get('next')!=None:
-        #     GetNext(playlistid=playlistid,next=urlData.get('next'))
+        print(len(contentUrls))  
+        if urlData.get('next')!=None:
+            GetNext(playlistid=playlistid,next=urlData.get('next'))
             
         # while True:
             
@@ -188,7 +188,7 @@ def ExtractPlaylistVideos(request):
                         urlsDict[i] = newVideo
                         
                     mainContentData['Urls'] = urlsDict
-            print(mainContentData)
+            # print(mainContentData)
                     
             return HttpResponse(json.dumps(mainContentData))          
                     
