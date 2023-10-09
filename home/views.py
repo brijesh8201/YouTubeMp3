@@ -97,6 +97,7 @@ def get_yt_id(url, ignore_playlist=False):
 contentUrls = []
 def ExtractPlaylistVideos(request):
     global contentUrls
+    contentUrls = []
     # _-------------------------------------------- Methos First ----------------------------------------------
     # dataUrls = {}
     # PlaylistVideos = []
@@ -141,9 +142,17 @@ def ExtractPlaylistVideos(request):
         urlData = response.json()
         contentUrls = contentUrls+urlData.get('contents')
 
-        if urlData.get('next')!=None:
-            GetNext(playlistid=playlistid,next=urlData.get('next'))
+        # print(urlData)  
+        # if urlData.get('next')!=None:
+        #     GetNext(playlistid=playlistid,next=urlData.get('next'))
             
+        # while True:
+            
+        #     print(urlData)  
+        #    
+        #        break
+        #     GetNext(playlistid=playlistid,next=urlData.get('next'))
+
         urlData['contents'] = contentUrls
         return urlData
     

@@ -218,6 +218,7 @@ let InsertPLaylistVideosFromList = (urls) => {
   playlistId = GetUrlParams('list')
   let strVideotheme = ``
   modalBackImg.style.backgroundImage = `url('https://img.youtube.com/vi/${GetVideoId(urls[0]['url'])}/maxresdefault.jpg')`
+  console.log(`https://img.youtube.com/vi/${GetVideoId(urls[0]['url'])}/maxresdefault.jpg`)
 
   CurrentPlayingSongsList = {}
 
@@ -233,7 +234,7 @@ let InsertPLaylistVideosFromList = (urls) => {
 
     //                   </a></div>`
 
-    strVideotheme += `<div class='d-flex justify-content-center m-auto playlistBox' ><span class='text-white'>${index + 1}. </span><a href="/watch?v=${GetVideoId(element['url'])}&list=${playlistId}" class="card m-auto my-1 text-truncate" style="width:18rem;text-decoration:none;background-image:url('https://img.youtube.com/vi/${GetVideoId(element['url'])}/maxresdefault.jpg')">
+    strVideotheme += `<div class='d-flex justify-content-center m-auto playlistBox' ><span class='text-white'>${index + 1}. </span><a href="/watch?v=${GetVideoId(element['url'])}&list=${playlistId}&index=${index}" class="card m-auto my-1 text-truncate" style="width:18rem;text-decoration:none;background-image:url('https://img.youtube.com/vi/${GetVideoId(element['url'])}/maxresdefault.jpg')">
                               <img  src="https://img.youtube.com/vi/${GetVideoId(element['url'])}/maxresdefault.jpg" class="card-img-top" alt="...">
                               <span class="playlistTitle text-truncate px-1" style="color: #00ffe5 !important;background: #0000006e;">${element['title']}</span>
                           </a></div>`
@@ -244,7 +245,6 @@ let InsertPLaylistVideosFromList = (urls) => {
 }
 
 function replaceUrlParam(index,id) {
-  
   let Currenturl = window.location.href
   console.log(Currenturl)
   let newUrl = String(Currenturl).split('?')[1].split('&')
@@ -355,9 +355,9 @@ let LoadNewSong = (url, videoId, title, filename) => {
   AudioConnector.play()
   shareTitle.setAttribute('content', title)
   ShareImage.setAttribute('content', `https://img.youtube.com/vi/${GetVideoId(videoId)}/maxresdefault.jpg`)
+
   nextSkipBtn.removeAttribute('disabled')
-  PreBtn.removeAttribute('disabled')
-  
+  preSkipBtn.removeAttribute('disabled')
 
 }
 
