@@ -1,3 +1,6 @@
+from django.shortcuts import render
+
+# Create your views here.
 from django.shortcuts import render,HttpResponse
 from urllib.parse import urlparse, parse_qs
 from contextlib import suppress
@@ -22,10 +25,11 @@ def HomePage(request):
         context['playlist'] = PlaylistUrls
         context['VideoId'] = videoId
         context['isPlaylist'] = False if playlistId is None else True
-        
-        return render(request=request,template_name='index.html',context=context)
+        context['cards'] = range(20)
+            
+        return render(request=request,template_name='index2.html',context=context)
    
-    return render(request,'index.html',context)
+    return render(request,'index2.html',context)
 
 def LogIn(request):
     return render(request,'login.html')

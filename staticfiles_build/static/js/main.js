@@ -54,6 +54,7 @@ let volumecontrolbtn = document.getElementById('volumecontrolbtn')
 let volumecontrols = document.getElementById('volumecontrol')
 volumecontrols.style.backgroundSize = '50% 100%'
 
+
 volumecontrolbtn.addEventListener('click', (event) => {
 
   if (VolumeControlBox.classList.contains('d-none')) {
@@ -67,6 +68,7 @@ volumecontrolbtn.addEventListener('click', (event) => {
   }
 
 })
+
 volumecontrol.addEventListener('focusout', () => {
   VolumeControlBox.classList.add('d-none')
 })
@@ -160,11 +162,40 @@ volumecontrol.addEventListener('input', (event) => {
   volumecontrolstatus.innerHTML = `${volumecontrol.value}%`
   volumecontrol.style.backgroundSize = `${volume * 100}% 100%`
   AudioConnector.volume = volume
+  console.log('changed volume')
+
 })
 
-// volumecontrol.addEventListener('change',()=>{
-//     volumecontrolbtns.innerHTML = '<i class="bi bi-soundwave fs-2 text-primary" style="font-weight: bolder;"></i>'
-// })
+volumecontrol.addEventListener('change',()=>{
+  SetLocalVolume(AudioConnector.volume)
+  currentVolume = JSON.parse(localStorage.getItem('volume'))['volume']
+  console.log("This is the current saved volume :",currentVolume)
+})
+
+// |||||||||||||||||||||| Creating Curreint volume settings |||||||||||||||||||||||||||||||||
+let SetLocalVolume = (volume)=>{
+  if(localStorage.getItem('volume')==undefined){
+    localStorage.setItem('volume',JSON.stringify({}))
+  }
+  localStorage.setItem('volume',JSON.stringify({'volume':volume}))
+
+}
+
+let GetLocalVolume = async ()=>{
+  if(localStorage.getItem('volume')==undefined){
+    SetLocalVolume(AudioConnector.volume)
+  }
+  currentVolume = JSON.parse(localStorage.getItem('volume'))['volume']
+  console.log("This is the current saved volume :",currentVolume)
+  volumecontrol.value = currentVolume*100
+  
+  volume = volumecontrol.value / 100
+  volumecontrolstatus.innerHTML = `${volumecontrol.value}%`
+  volumecontrol.style.backgroundSize = `${volume * 100}% 100%`
+  AudioConnector.volume = volume
+
+}
+// |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 let GetUrlParams = (param) => {
   const queryString = window.location.search;
@@ -569,7 +600,6 @@ SearchForurl.addEventListener('click', (event) => {
 
 })
 
-
 function ShowSavedPlaylist() {
   let savedplaylistStr = ``
   savedplaylist = JSON.parse(localStorage.getItem('playlist'))
@@ -706,6 +736,7 @@ window.onload = async () => {
 
 // ________________________________ Adding Keyboard Shortcuts __________________________________________//
 document.onkeyup = function (e) {
+  console.log(e.which)
 
   if (e.which == 32) {
     PlayButton.click()
@@ -738,6 +769,10 @@ document.onkeyup = function (e) {
     LoadList.click()
   }
 };
+
+document.addEventListener('contextmenu',(event)=>{
+  return event.preventDefault()
+})
 
 // shortHistory
 // shortfaveroite
