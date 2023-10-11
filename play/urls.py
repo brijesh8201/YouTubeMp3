@@ -7,4 +7,5 @@ urlpatterns = [
     path('newsong/',GetNewSong,name='Playlist'),
     path('login/',LogIn,name='login'),
     path('signup/',Signup,name='login'),
+    path('createqr/',Signup,name='login'),
 ]

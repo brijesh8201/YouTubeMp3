@@ -32,6 +32,10 @@
         -webkit-animation-duration: 0.9s;
       }
 
+      #phoneshareButton{
+        display: none !important;
+      }
+
       @media only screen and (max-width: 680px) {
         .fornt_Image {
           height: 75% !important;
@@ -39,6 +43,12 @@
           bottom: 50px!important;
           margin: 0px 2px !important;
   
+        }
+        #phoneshareButton{
+          display: block !important;
+        }
+        #desktopshareButton{
+          display: none !important;
         }
         .navsearch span{
           display: none;
@@ -99,9 +109,10 @@
         outline: none!important;
       }
     </style>
+
   <script>
     document.addEventListener('contextmenu',(event)=>{
-      return event.preventDefault()
+      return true
     })
   </script>
   </head>
@@ -140,8 +151,9 @@
                   <div class="my-4"><button id="shortHistory" data-bs-target="#modalforHistoryPlaylist" data-bs-toggle="modal" class="btn"><i class="bi bi-list"></i> <span> Related</span></button> </div>
                   <div class="my-3"><button id="shortfaveroite" id="issavedtolocalvideo" data-bs-target="#modalformFaveroiteVideos" data-bs-toggle="modal" class="btn"><i class="bi bi-film"></i> <span> videos</span></button></div>
                   <div class="my-3 {% if not VideoId %} d-none {% endif %}"><button id="issavedtolocal" class="btn"><i class="bi bi-heart"></i> <span> Save</span></button></div>
-                  <div class="my-3 {% if not VideoId %} d-none {% endif %}"><button id="shortShare" onclick="SharePage()" class="btn"><i class="bi bi-share-fill"></i> <span> Share</span></button></div>
-                  <div class="my-3 {% if not VideoId %} d-none {% endif %}"><a id="downloadNowbtn" class="btn " ><i class="bi bi-box-arrow-down"></i><span> Download</span> </a></div>
+                  <div class="my-3 {% if not VideoId %} {% endif %}" id="desktopShareButton"><button id="shortShare" data-bs-target="#modalformDesktopshare" data-bs-toggle="modal" class="btn"><i class="bi bi-share-fill"></i> <span> Share</span></button></div>
+                  <!-- <div class="my-3 {% if not VideoId %} {% endif %}" id="phoneshareButton"><button id="shortShare" onclick="SharePage()" class="btn"><i class="bi bi-share-fill"></i> <span> Share</span></button></div> -->
+                  <div class="my-3 {% if not VideoId %} {% endif %}" ><a id="downloadNowbtn" class="btn " ><i class="bi bi-box-arrow-down"></i><span> Download</span> </a></div>
 
                 </div>
 
@@ -195,12 +207,12 @@
 
     </div>
 
-
     <!-- |||||||||||||||||||||||||   Creating Searching and auto suggesions area for user |||||||||||||||||||||| -->
     <div class="container-fluid m-0 p-0 " id="explore" style="height:100vh;">
 
       <div  class="border shadow d-flex align-items-center justifyc-content-start p-0 position-relative bg-info">
-      
+       
+
         <button onclick="window.location.href='#player'" class="btn btn-sm position-absolute end-0 bg-success mx-5 waitingForConnection" style="z-index:1;bottom:-40px"><i class="bi bi-tv text-white"></i></button>
 
             <nav class="navbar bg-transparent d-inline-block navsearch">
@@ -215,7 +227,10 @@
                 <button class="btn btn-outline-success" type="submit">Search</button>
               </form>
             </div>
-      </div>
+          </div>
+          <div class="progress" role="progressbar" aria-label="info 1px high" style="height:2px !important;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style="height: 1px">
+            <div class="progress-bar" style="width:25%;height:2px; background: linear-gradient(45deg, red, blue);"></div>
+          </div>
       
       <div class="m-auto p-2 w-100 d-flex flex-wrap justify-content-center overflow-auto seach_results bg-info" style="height:85%;">
 
@@ -349,6 +364,84 @@
   </div>
 </div>
 
+<!-- Modal for desktop share -->
+<div class="modal fade backCardImage" id="modalformDesktopshare" aria-hidden="true"aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+  
+  <div class="modal-dialog modal-dialog-centered ">
+    <div class="modal-content border" id="modalBackImgsaved" style="background-image:url('{% static 'files/back.jpg' %}')">
+      <div class="modal-header backCardImage d-flex justify-content align-items-center">
+        <!-- <button type="button" class="btn-close position-absolute top-0 m-2 end-0 bg-secondary" data-bs-dismiss="modal" aria-label="Close"></button> -->
+        
+        <img src="{% static 'files/icon1.png' %}" width="55px" height="55px" alt="">
+        <span class="modal-title text-white fs-2 mx-auto" >Share with friends</span>
+        <button type="button" class="btn" data-bs-dismiss="modal" ><i class="text-white fs-2 bi bi-x"></i></button>
+         
+        
+      </div>
+      <div class="modal-body p-0 m-0">
+        <style>
+          .media-icons1:hover{
+            color: #c91515 !important;
+          }
+          .media-icons2:hover{
+            color: #1da1f2 !important;
+          }
+          .media-icons4:hover{
+            color: #e1306c !important;
+          }
+          .media-icons5:hover{
+            color: #00f7ff !important;
+          }
+          .media-icons3:hover{
+            color: #00ff40 !important;
+          }
+          .media-icons6:hover{
+            color: #cc8500 !important;
+          }
+          .media-icons7:hover{
+            color: #00ffea !important;
+          }
+          .media-icons8:hover{
+            color: #ff006a !important;
+          }
+        </style>
+          <div class="row w-100 m-auto media-icons">                                                                              
+            <div class="col text-center"><button id="facebookShare" onclick="ShareNowLink(this)" class="btn border-0 p-0 m-0 fs-1"><i class="text-white media-icons2 bi fs-2 bi-facebook"></i></button></div>
+            <div class="col text-center"><button id="whatsappShare" onclick="ShareNowLink(this)" class="btn border-0 p-0 m-0 fs-1"><i class="text-white media-icons3 bi fs-2 bi-whatsapp"></i></i></button></div>
+            <div class="col text-center"><button id="instagramShare"onclick="ShareNowLink(this)" class="btn border-0 p-0 m-0 fs-1"><i class="text-white media-icons4 bi fs-2 bi-instagram"></i></button></div>
+            <div class="col text-center"><button id="twitterShare"  onclick="ShareNowLink(this)" class="btn border-0 p-0 m-0 fs-1"><i class="text-white media-icons5 bi fs-2 bi-twitter"></i></button></div>
+            <div class="col text-center"><button id="mailShare"     onclick="ShareNowLink(this)" class="btn border-0 p-0 m-0 fs-1"><i class="text-white media-icons1 bi fs-2 bi-envelope"></i></button></div>
+          </div>
+          <hr>
+          <div class="row justify-content-center align-items-center w-100 h-100 m-auto p-2">
+              <p class="w-100 text-center text-white fs-3">Scan QR Code</p>
+              <div style="width: 100px;height:100px;" class="w-50 h-50 d-flex justify-content-center align-items-center bg-transparent">
+                <img id="shareWithQR"  alt="" title="Scan QR Code" />
+                
+              </div>
+              <input type="url" name="copyurl" id="copyurl" class="w-100 my-1 border-0" style="background-color: #140929;color:gray;" >
+              <div class="row text-center shadow-lg border rounded mx-auto m-2">
+                <div class="col"><button class="btn border-0" title="copy site link" onclick="CopyShareUrl(this,'link')"><i class="fs-4 text-white media-icons6 bi bi-copy"></i></button></div>
+                <div class="col"><button class="btn border-0 d-none" title="copy qr image" onclick="CopyShareUrl(this,'qr')" ><i class="fs-4 text-white media-icons7 bi bi-qr-code"></i></button></div>
+                <div class="col"><button class="btn border-0" title="Global Share" onclick="SharePage()"><i class="fs-4 text-white media-icons8 bi bi-share-fill"></i></button></div>
+                <input type="text" id="shareQRurl" hidden>
+              </div>
+              <script>
+                let url = window.location.href
+
+                document.getElementById('shareWithQR').src = `https://api.qrserver.com/v1/create-qr-code/?data=${url}&amp;size=200x200&charset-source=UTF-8&bgcolor=140929&format=png&color=0-255-0`;
+                document.getElementById('copyurl').value = url;
+                document.getElementById('shareQRurl').value = document.getElementById('shareWithQR').src;
+              </script>
+              
+
+          </div>
+            
+      </div>
+    </div>
+  </div>
+</div>
+
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"crossorigin="anonymous"></script>
@@ -357,7 +450,72 @@
           <!-- <script src="https://code.jquery.com/jquery-3.7.1.js"></script> -->
   <script src="{% static 'js/code.jquery.com_jquery-3.7.1.js'%}"></script>
   <script src="{% static 'js/main.js'%}"></script>
+  <script>
+     
+   
+    let shareUrl = window.location.href
 
+    let whatslinkurl = 'whatsapp://send?text='+shareUrl
+    let twitterrul = 'https://twitter.com/share?url='+shareUrl
+    let facebookurl = 'https://www.facebook.com/sharer/sharer.php?u='+shareUrl
+    let instagramurl = "https://www.instagram.com/?url=" +shareUrl
+    let mailurl =     "mailto:?subject=<SUBJECT>&body=<BODY>"
+    
+    "https://twitter.com/share?url=<URL>&text="
+    "https://www.facebook.com/sharer/sharer.php?u="
+
+    
+    function ShareNowLink(target){
+
+      if(target.id=='mailShare'){
+        shareUrl = mailurl
+      }
+      else if(target.id=='facebookShare'){
+        shareUrl = facebookurl
+
+      }
+      else if(target.id=='whatsappShare'){
+        shareUrl = whatslinkurl
+
+      }
+      else if(target.id=='instagramShare'){
+        shareUrl = instagramurl
+
+      }
+      else if(target.id=='twitterShare'){
+        shareUrl = twitterrul
+
+      }
+
+      let sharebtn = document.createElement('a')
+      sharebtn.href = shareUrl;
+      sharebtn.target = '_blank'
+      sharebtn.hidden = true
+      document.body.append(sharebtn)
+      sharebtn.click()
+    }
+
+    async function  CopyQRimage(){
+      
+        let CopyImage = async (blob)=>{
+          const data =  new ClipboardItem({
+            'image/png': blob
+        })
+        
+          await navigator.clipboard.write(data)
+
+          console.log('Image copied successfully')
+        }
+        let shareQRurl = 'https://res.cloudinary.com/practicaldev/image/fetch/s--Z60CcJZG--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/i/ons7jazm37qvgbd7dma6.png'
+        let ImageUrl = await fetch(shareQRurl.src)
+
+        let imgblob = ImageUrl.blob()
+
+        await CopyImage(imgblob)
+
+    }
+
+  </script>
         
 </body>
 

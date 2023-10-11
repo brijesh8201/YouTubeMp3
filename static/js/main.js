@@ -894,9 +894,90 @@ document.onkeyup = function (e) {
 };
 
 
+let CopyShareUrl = (target, info) => {
+
+  var cpLink = document.getElementById('copyurl');
+  var shareQRurl = document.getElementById('shareQRurl');
+  if (info == 'link') {
+    cpLink.select();
+  }
+  else {
+    shareQRurl.select();
+  }
+
+  try {
+    var successful = document.execCommand('copy');
+    var msg = successful ? 'successful' : 'unsuccessful';
+    console.log('Copy command was ' + msg);
+  } catch (err) {
+    console.log('Oops, unable to copy');
+  }
+  event.preventDefault;
+
+  if (info == 'link') {
+    target.innerHTML = '<i class="bi fs-4 text-white bi-clipboard-check-fill"></i>'
+    setTimeout(() => {
+      target.innerHTML = '<i class="fs-4 text-white bi bi-copy"></i>'
+
+    }, 3000);
+  }
+  else {
+    target.innerHTML = '<i class="bi fs-4 text-white bi-clipboard-check-fill"></i>'
+    setTimeout(() => {
+      target.innerHTML = '<i class="fs-4 text-white bi bi-qr-code"></i>'
+
+    }, 3000);
+  }
+}
+
+
+
+
+// |||||||||||||||||||||||||||||||||||>>> Modifying chrome media player notification for android notifications <<<||||||||||||||||||||||||||
+// if ('mediaSession' in navigator) {
+
+//   navigator.mediaSession.metadata = new MediaMetadata({
+//   title: 'Never Gonna Give You Up',
+//   artist: 'Rick Astley',
+//   album: 'Whenever You Need Somebody',
+//   artwork: [
+//       { src: 'https://dummyimage.com/96x96',   sizes: '96x96',   type: 'image/png' },
+//       { src: 'https://dummyimage.com/128x128', sizes: '128x128', type: 'image/png' },
+//       { src: 'https://dummyimage.com/192x192', sizes: '192x192', type: 'image/png' },
+//       { src: 'https://dummyimage.com/256x256', sizes: '256x256', type: 'image/png' },
+//       { src: 'https://dummyimage.com/384x384', sizes: '384x384', type: 'image/png' },
+//       { src: 'https://dummyimage.com/512x512', sizes: '512x512', type: 'image/png' },
+//   ]
+//   });
+
+//   navigator.mediaSession.setActionHandler('play', function() {});
+//   navigator.mediaSession.setActionHandler('pause', function() {});
+//   navigator.mediaSession.setActionHandler('seekbackward', function() {});
+//   navigator.mediaSession.setActionHandler('seekforward', function() {});
+//   navigator.mediaSession.setActionHandler('previoustrack', function() {});
+//   navigator.mediaSession.setActionHandler('nexttrack', function() {});
+// }
+
+  // if ('mediaSession' in navigator) {
+
+  //   navigator.mediaSession.metadata = new MediaMetadata({
+  //   title: 'Never Gonna Give You Up',
+  //   artist: 'Rick Astley',
+  //   album: 'Whenever You Need Somebody',
+  //   artwork: [
+  //       { src: 'https://dummyimage.com/96x96',   sizes: '96x96',   type: 'image/png' },
+  //       { src: 'https://dummyimage.com/128x128', sizes: '128x128', type: 'image/png' },
+  //       { src: 'https://dummyimage.com/192x192', sizes: '192x192', type: 'image/png' },
+  //       { src: 'https://dummyimage.com/256x256', sizes: '256x256', type: 'image/png' },
+  //       { src: 'https://dummyimage.com/384x384', sizes: '384x384', type: 'image/png' },
+  //       { src: 'https://dummyimage.com/512x512', sizes: '512x512', type: 'image/png' },
+  //   ]
+  //   });
+  // }
 
 // shortHistory
 // shortfaveroite
 // shortShare
 // downloadNowbtn
 // issavedtolocal
+
