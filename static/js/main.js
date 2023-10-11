@@ -855,7 +855,6 @@ window.onload = async () => {
   await ShowSavedPlaylist()
   await insetFaveroiteVideoInBox()
 
-
 }
 
 // ________________________________ Adding Keyboard Shortcuts __________________________________________//

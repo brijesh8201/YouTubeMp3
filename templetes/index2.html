@@ -372,7 +372,7 @@
       <div class="modal-header backCardImage d-flex justify-content align-items-center">
         <!-- <button type="button" class="btn-close position-absolute top-0 m-2 end-0 bg-secondary" data-bs-dismiss="modal" aria-label="Close"></button> -->
         
-        <img src="{% static 'files/icon1.png' %}" width="55px" height="55px" alt="">
+        <img src="{% static 'files/icon1.png' %}" width="55px" height="60px" alt="">
         <span class="modal-title text-white fs-2 mx-auto" >Share with friends</span>
         <button type="button" class="btn" data-bs-dismiss="modal" ><i class="text-white fs-2 bi bi-x"></i></button>
          
@@ -416,7 +416,10 @@
           <div class="row justify-content-center align-items-center w-100 h-100 m-auto p-2">
               <p class="w-100 text-center text-white fs-3">Scan QR Code</p>
               <div style="width: 100px;height:100px;" class="w-50 h-50 d-flex justify-content-center align-items-center bg-transparent">
-                <img id="shareWithQR"  alt="" title="Scan QR Code" />
+                <!-- <img id="shareWithQR"  alt="" title="Scan QR Code" />
+                 -->
+                 <div id="qrcode"></div>
+
                 
               </div>
               <input type="url" name="copyurl" id="copyurl" class="w-100 my-1 border-0" style="background-color: #140929;color:gray;" >
@@ -425,13 +428,25 @@
                 <div class="col"><button class="btn border-0 d-none" title="copy qr image" onclick="CopyShareUrl(this,'qr')" ><i class="fs-4 text-white media-icons7 bi bi-qr-code"></i></button></div>
                 <div class="col"><button class="btn border-0" title="Global Share" onclick="SharePage()"><i class="fs-4 text-white media-icons8 bi bi-share-fill"></i></button></div>
                 <input type="text" id="shareQRurl" hidden>
-              </div>
-              <script>
-                let url = window.location.href
 
-                document.getElementById('shareWithQR').src = `https://api.qrserver.com/v1/create-qr-code/?data=${url}&amp;size=200x200&charset-source=UTF-8&bgcolor=140929&format=png&color=0-255-0`;
-                document.getElementById('copyurl').value = url;
-                document.getElementById('shareQRurl').value = document.getElementById('shareWithQR').src;
+              </div>
+              
+              <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+              <script>
+               let url = window.location.href
+               document.getElementById('copyurl').value = url;
+
+                const qrcode = new QRCode(document.getElementById('qrcode'), {
+                  text: window.location.href,
+                  width: 200,
+                  height: 200,
+                  colorDark : '#00D100',
+                  colorLight : '#140929',
+                  correctLevel : QRCode.CorrectLevel.H
+                });
+                
+                
+                
               </script>
               
 
