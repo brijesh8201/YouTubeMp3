@@ -220,6 +220,7 @@ let LoadPlaylistDataInPLaylistBox = (playlistUrls) => {
   playlistThumbnail.src = `https://img.youtube.com/vi/${GetVideoId(playlistUrls['Urls'][0]['url'])}/maxresdefault.jpg`
 
   // // Inserting playlist video into playlist box
+  console.log(playlistUrls)
   InsertPLaylistVideosFromList(playlistUrls['Urls'])
 
   for (let index = 0; index < disabledBtns.length; index++) {
@@ -666,11 +667,13 @@ function ShowSavedPlaylist() {
 
   let savedplaylistStr = ``
   savedplaylist = JSON.parse(localStorage.getItem('playlist'))
-  console.log("this is the saved playlist ", savedplaylist)
   let TotalVideos = 0
 
+  console.log(savedplaylist)
+  
   if (savedplaylist != undefined) {
     for (let index = 0; index < Object.keys(savedplaylist).length; index++) {
+
       savedKeys = Object.keys(savedplaylist)
       const element = savedplaylist[savedKeys[index]];
 
@@ -710,7 +713,6 @@ let LoadFirstSong = () => {
   let Videoid = GetUrlParams('v')
   if (Videoid != null || Videoid != undefined) {
     let firstUrl = `https://www.youtube.com/watch?v=${Videoid}`
-    console.log("Requesting... for first")
     SendLoadRequest(firstUrl)
 
   }
@@ -718,7 +720,6 @@ let LoadFirstSong = () => {
 }
 
 let LoadLocalPlaylist = async () => {
-  console.log("loading playlist...........")
 
   if (GetUrlParams('list') != null) {
 
@@ -730,7 +731,6 @@ let LoadLocalPlaylist = async () => {
       let dataurls = { 'videoid': GetUrlParams('list'), 'csrfmiddlewaretoken': TokenCsrf.value }
 
       $(() => {
-        console.log("loading playlist...........")
         // function will get executed  
         // on click of submit button 
         $.ajax({
@@ -739,7 +739,6 @@ let LoadLocalPlaylist = async () => {
           data: dataurls,
           success: function (data) {
             let playlistUrls = JSON.parse(data)
-            console.log(playlistUrls)
             LoadPlaylistDataInPLaylistBox(playlistUrls)
           },
           error: function (data) {
@@ -752,7 +751,6 @@ let LoadLocalPlaylist = async () => {
     }
     else {
       let CurrentPlaylistData = GetPlaylit(GetUrlParams('list'))
-
       LoadPlaylistDataInPLaylistBox(CurrentPlaylistData)
 
     }
@@ -820,7 +818,6 @@ deleteOnePlatlist.addEventListener('click', (event) => {
   for (let index = 0; index < selecteplaylist.length; index++) {
     const element = selecteplaylist[index];
     if (element.checked) {
-      console.log("This element is checked ", element)
       DeletePlaylist(element.dataset.playlistid)
     }
 
@@ -829,7 +826,7 @@ deleteOnePlatlist.addEventListener('click', (event) => {
 
   deleteOnePlatlist.setAttribute('disabled', 'true')
   let playlistdataLength = Object.keys(GetPlaylit()).length
-  console.log(playlistdataLength)
+
   if (playlistdataLength < 1) {
     deleteAllPlaylist.setAttribute('disabled', 'true')
   }
@@ -850,7 +847,7 @@ window.onload = async () => {
   await GetLocalVolume()
   await LoadFirstSong()
   await LoadLocalPlaylist()
-  // await ShowSavedPlaylist()
+  await ShowSavedPlaylist()
   await insetFaveroiteVideoInBox()
 
 }
@@ -905,9 +902,7 @@ let CopyShareUrl = (target, info) => {
   try {
     var successful = document.execCommand('copy');
     var msg = successful ? 'successful' : 'unsuccessful';
-    console.log('Copy command was ' + msg);
   } catch (err) {
-    console.log('Oops, unable to copy');
   }
   event.preventDefault;
 
@@ -930,11 +925,9 @@ let CopyShareUrl = (target, info) => {
 let PlayPausewithThumbnailClick = (event) => {
   if (AudioConnector.paused) {
     AudioConnector.play()
-    console.log('playing...')
   }
   else {
     AudioConnector.pause()
-    console.log('Paused ...')
   }
 }
 
@@ -947,7 +940,7 @@ $('#searchNewitem').submit((event) => {
 
   console.clear()
   if (inputBox.value != '') {
-    console.log(inputBox.value)
+
     var url = '/search/';
     let TokenCsrf = document.querySelector('input[name="csrfmiddlewaretoken"]')
     let dataurls = { 'query': inputBox.value, 'csrfmiddlewaretoken': TokenCsrf.value }
@@ -1003,7 +996,6 @@ let LoadSearchedVideo = (VideosData) => {
   for (index = 0; index <= VideosData.length; index++) {
     let element = VideosData[index]
     try {
-      console.log()
 
       videoStr += `<a href="/watch/?v=${element['videoId']}" title="${element['title']}" class="card m-1 pb-1 overflow-hidden videoWidth text-decoration-none" aria-hidden="true" ">
         
@@ -1084,7 +1076,6 @@ async function CopyQRimage() {
 
     await navigator.clipboard.write(data)
 
-    console.log('Image copied successfully')
   }
   let shareQRurl = 'https://res.cloudinary.com/practicaldev/image/fetch/s--Z60CcJZG--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/i/ons7jazm37qvgbd7dma6.png'
   let ImageUrl = await fetch(shareQRurl.src)
