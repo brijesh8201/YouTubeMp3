@@ -173,27 +173,27 @@ volumecontrol.addEventListener('input', (event) => {
 
 })
 
-volumecontrol.addEventListener('change',()=>{
+volumecontrol.addEventListener('change', () => {
   SetLocalVolume(AudioConnector.volume)
   currentVolume = JSON.parse(localStorage.getItem('volume'))['volume']
 })
 
 // |||||||||||||||||||||| Creating Curreint volume settings |||||||||||||||||||||||||||||||||
-let SetLocalVolume = (volume)=>{
-  if(localStorage.getItem('volume')==undefined){
-    localStorage.setItem('volume',JSON.stringify({}))
+let SetLocalVolume = (volume) => {
+  if (localStorage.getItem('volume') == undefined) {
+    localStorage.setItem('volume', JSON.stringify({}))
   }
-  localStorage.setItem('volume',JSON.stringify({'volume':volume}))
+  localStorage.setItem('volume', JSON.stringify({ 'volume': volume }))
   GetLocalVolume()
 }
 
-let GetLocalVolume = async ()=>{
-  if(localStorage.getItem('volume')==undefined){
+let GetLocalVolume = async () => {
+  if (localStorage.getItem('volume') == undefined) {
     SetLocalVolume(0.5)
   }
   currentVolume = JSON.parse(localStorage.getItem('volume'))['volume']
-  volumecontrol.value = currentVolume*100
-  
+  volumecontrol.value = currentVolume * 100
+
   volume = volumecontrol.value / 100
   volumecontrolstatus.innerHTML = `${volumecontrol.value}%`
   volumecontrol.style.backgroundSize = `${volume * 100}% 100%`
@@ -272,7 +272,7 @@ let InsertPLaylistVideosFromList = (urls) => {
   insertPlayingPlaylistVideo.innerHTML = strVideotheme
 }
 
-function replaceUrlParam(index,id) {
+function replaceUrlParam(index, id) {
   let Currenturl = window.location.href
   let newUrl = String(Currenturl).split('?')[1].split('&')
 
@@ -282,7 +282,7 @@ function replaceUrlParam(index,id) {
     URL[url[0]] = url[1]
   }
 
-  URL['index'] =index 
+  URL['index'] = index
   URL['v'] = id
 
   let keys = Object.keys(URL)
@@ -298,7 +298,7 @@ function replaceUrlParam(index,id) {
     if (i == 0) {
       odlUrl += `?${keys[i]}=${URL[keys[i]]}`
     }
-    else{
+    else {
 
       odlUrl += '&' + keys[i] + '=' + URL[keys[i]]
     }
@@ -315,7 +315,7 @@ function Nextsong() {
   index = (Number.parseInt(index) + 1) % Object.keys(CurrentPlayingSongsList).length
   VideoId = CurrentPlayingSongsList[index]
 
-  let NewUrl = replaceUrlParam(index,GetVideoId(VideoId))
+  let NewUrl = replaceUrlParam(index, GetVideoId(VideoId))
 }
 
 function Presong() {
@@ -327,7 +327,7 @@ function Presong() {
   index = (index - 1 + Object.keys(CurrentPlayingSongsList).length) % Object.keys(CurrentPlayingSongsList).length
   videoID = CurrentPlayingSongsList[index]
   // SendLoadRequest(videoID)
-  let NewUrl = replaceUrlParam(index,GetVideoId(videoID))
+  let NewUrl = replaceUrlParam(index, GetVideoId(videoID))
 
 }
 
@@ -349,7 +349,7 @@ function SendLoadRequest(videoID) {
   PlayButton.setAttribute('disabled', 'true')
   let TokenCsrf = document.querySelector('input[name="csrfmiddlewaretoken"]')
   let dataurls = { 'url': videoID, 'csrfmiddlewaretoken': TokenCsrf.value }
-  
+
   $.ajax({
     type: "POST",
     url: url,
@@ -420,7 +420,7 @@ async function SharePage() {
   try {
     await navigator.share(shareData);
   } catch (err) {
-    console.log("Have an error while sharing this apge : ",err)
+    console.log("Have an error while sharing this apge : ", err)
   }
 
 
@@ -452,14 +452,14 @@ let ClearPlaylist = () => {
   ShowSavedPlaylist()
 }
 
-let GetPlaylit = (name=null) => {
+let GetPlaylit = (name = null) => {
 
   playlist = JSON.parse(localStorage.getItem('playlist'))
 
   if (playlist == undefined) {
     return playlist
   }
-  else if(name==null){
+  else if (name == null) {
     return playlist
   }
   return playlist[name]
@@ -666,7 +666,7 @@ function ShowSavedPlaylist() {
 
   let savedplaylistStr = ``
   savedplaylist = JSON.parse(localStorage.getItem('playlist'))
-  console.log("this is the saved playlist ",savedplaylist)
+  console.log("this is the saved playlist ", savedplaylist)
   let TotalVideos = 0
 
   if (savedplaylist != undefined) {
@@ -698,11 +698,11 @@ function ShowSavedPlaylist() {
     deleteAllPlaylist.removeAttribute('disabled')
 
   }
-  
-  if(Object.keys(savedplaylist).length<1){
-    deleteAllPlaylist.setAttribute('disabled','true')
+
+  if (Object.keys(savedplaylist).length < 1) {
+    deleteAllPlaylist.setAttribute('disabled', 'true')
   }
-  
+
 
 }
 
@@ -796,59 +796,59 @@ AudioConnector.addEventListener('loadstart', function () {
 });
 
 
-let DeleteSelectedPlaylists = ()=>{
+let DeleteSelectedPlaylists = () => {
   let selecteplaylist = document.querySelectorAll('.selectedPlaylist')
-  
-  let checkBox=  false;
+
+  let checkBox = false;
   for (let index = 0; index < selecteplaylist.length; index++) {
     const element = selecteplaylist[index];
-    if(element.checked){
+    if (element.checked) {
       checkBox = true
       deleteOnePlatlist.removeAttribute('disabled')
       break
     }
-    
+
   }
   if (!checkBox) {
-    deleteOnePlatlist.setAttribute('disabled','true')
-    
+    deleteOnePlatlist.setAttribute('disabled', 'true')
+
   }
 }
 
-deleteOnePlatlist.addEventListener('click',(event)=>{
+deleteOnePlatlist.addEventListener('click', (event) => {
   let selecteplaylist = document.querySelectorAll('.selectedPlaylist')
   for (let index = 0; index < selecteplaylist.length; index++) {
     const element = selecteplaylist[index];
-    if(element.checked){
-      console.log("This element is checked ",element)
+    if (element.checked) {
+      console.log("This element is checked ", element)
       DeletePlaylist(element.dataset.playlistid)
     }
 
   }
   ShowSavedPlaylist()
 
-  deleteOnePlatlist.setAttribute('disabled','true')
+  deleteOnePlatlist.setAttribute('disabled', 'true')
   let playlistdataLength = Object.keys(GetPlaylit()).length
   console.log(playlistdataLength)
-  if(playlistdataLength<1){
-    deleteAllPlaylist.setAttribute('disabled','true')
+  if (playlistdataLength < 1) {
+    deleteAllPlaylist.setAttribute('disabled', 'true')
   }
 
 })
 
-deleteAllPlaylist.addEventListener('click',(event)=>{
+deleteAllPlaylist.addEventListener('click', (event) => {
   ClearPlaylist()
   ShowSavedPlaylist()
-  deleteAllPlaylist.setAttribute('disabled','true')
-  deleteOnePlatlist.setAttribute('disabled','true')
-  
+  deleteAllPlaylist.setAttribute('disabled', 'true')
+  deleteOnePlatlist.setAttribute('disabled', 'true')
+
 })
 
 
 window.onload = async () => {
   await checckIsSaved()
   await GetLocalVolume()
-  await LoadFirstSong()  
+  await LoadFirstSong()
   await LoadLocalPlaylist()
   // await ShowSavedPlaylist()
   await insetFaveroiteVideoInBox()
@@ -927,16 +927,174 @@ let CopyShareUrl = (target, info) => {
   }
 }
 
-let PlayPausewithThumbnailClick = (event)=>{
-    if (AudioConnector.paused) {
-      AudioConnector.play() 
-      console.log('playing...')
-    }
-    else{
-      AudioConnector.pause()
-      console.log('Paused ...')
-    }
+let PlayPausewithThumbnailClick = (event) => {
+  if (AudioConnector.paused) {
+    AudioConnector.play()
+    console.log('playing...')
+  }
+  else {
+    AudioConnector.pause()
+    console.log('Paused ...')
+  }
 }
+
+
+$('#searchNewitem').submit((event) => {
+  event.preventDefault()
+  let inputBox = document.getElementById('searchNewitem').firstElementChild
+  let Newsearchbox = document.getElementById('Newsearchbox')
+  let processbarstatus = document.getElementById('processbarstatus')
+
+  console.clear()
+  if (inputBox.value != '') {
+    console.log(inputBox.value)
+    var url = '/search/';
+    let TokenCsrf = document.querySelector('input[name="csrfmiddlewaretoken"]')
+    let dataurls = { 'query': inputBox.value, 'csrfmiddlewaretoken': TokenCsrf.value }
+    processbarstatus.style.width = '10%'
+    $.ajax({
+      type: "POST",
+      url: url,
+      data: dataurls,
+      success: function (data) {
+        processbarstatus.style.width = '30%'
+
+        searchdata = JSON.parse(data)
+        processbarstatus.style.width = '60%'
+
+        LoadSearchedVideo(searchdata['videos'])
+        processbarstatus.style.width = '100%'
+        setTimeout(() => {
+          processbarstatus.style.width = '0%'
+
+        }, 800)
+
+
+      },
+      error: function (data) {
+        console.log("Getting an error to search query")
+      }
+    });
+
+  }
+
+
+  else {
+    inputBox.style.border = '2px solid red'
+    inputBox.style.color = 'red !important'
+
+    inputBox.addEventListener("focus", (event) => {
+      setTimeout(() => {
+
+        inputBox.style.border = 'none'
+
+      }, 2000)
+
+    });
+
+  }
+
+});
+
+let LoadSearchedVideo = (VideosData) => {
+  let SearchContentbox = document.getElementById("SearchContentbox");
+  // viewCount videoId title thumbnail lengthText channelTitle
+  let videoStr = ``
+  for (index = 0; index <= VideosData.length; index++) {
+    let element = VideosData[index]
+    try {
+      console.log()
+
+      videoStr += `<a href="/watch/?v=${element['videoId']}" title="${element['title']}" class="card m-1 pb-1 overflow-hidden videoWidth text-decoration-none" aria-hidden="true" ">
+        
+                    <div class="card position-relative">
+                    <img src="${element['thumbnail'][(element['thumbnail'].length) - 1]['url']}" class="card-img-top position-relative" alt="...">
+                    <span class="col-6 w-100 position-absolute top-0 left-0 mx-auto text-primary" style="color: #00fff2 !important;font-weight: 900;">${element['lengthText']}</span>
+                    </div>
+
+                    <span class="text-truncate " style="font-size:14px" title=${element['title']}">${element['title']}</span>
+                  <div class="card-body p-0 m-0 d-flex justify-content-start text-start">
+                      <span class="w-100 mx-1" style="font-size:12px !important;">${abbreviateNumber(Number.parseInt(element['viewCount']))} views</span>
+                      <span class="w-100 mx-1" style="font-size:12px !important;text-truncate">(${element['channelTitle']})</span>
+                      
+                    </div>
+                  </a>`
+
+    }
+    catch (error) {
+      console.log(error)
+    }
+  }
+
+  SearchContentbox.innerHTML = videoStr
+
+
+}
+
+
+let shareUrl = window.location.href
+
+let whatslinkurl = 'whatsapp://send?text=' + shareUrl
+let twitterrul = 'https://twitter.com/share?url=' + shareUrl
+let facebookurl = 'https://www.facebook.com/sharer/sharer.php?u=' + shareUrl
+let instagramurl = "https://www.instagram.com/?url=" + shareUrl
+let mailurl = "mailto:?subject=<SUBJECT>&body=<BODY>"
+
+"https://twitter.com/share?url=<URL>&text="
+"https://www.facebook.com/sharer/sharer.php?u="
+
+
+function ShareNowLink(target) {
+
+  if (target.id == 'mailShare') {
+    shareUrl = mailurl
+  }
+  else if (target.id == 'facebookShare') {
+    shareUrl = facebookurl
+
+  }
+  else if (target.id == 'whatsappShare') {
+    shareUrl = whatslinkurl
+
+  }
+  else if (target.id == 'instagramShare') {
+    shareUrl = instagramurl
+
+  }
+  else if (target.id == 'twitterShare') {
+    shareUrl = twitterrul
+
+  }
+
+  let sharebtn = document.createElement('a')
+  sharebtn.href = shareUrl;
+  sharebtn.target = '_blank'
+  sharebtn.hidden = true
+  document.body.append(sharebtn)
+  sharebtn.click()
+}
+
+async function CopyQRimage() {
+
+  let CopyImage = async (blob) => {
+    const data = new ClipboardItem({
+      'image/png': blob
+    })
+
+    await navigator.clipboard.write(data)
+
+    console.log('Image copied successfully')
+  }
+  let shareQRurl = 'https://res.cloudinary.com/practicaldev/image/fetch/s--Z60CcJZG--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/i/ons7jazm37qvgbd7dma6.png'
+  let ImageUrl = await fetch(shareQRurl.src)
+
+  let imgblob = ImageUrl.blob()
+
+  await CopyImage(imgblob)
+
+}
+
+
 
 // |||||||||||||||||||||||||||||||||||>>> Modifying chrome media player notification for android notifications <<<||||||||||||||||||||||||||
 // if ('mediaSession' in navigator) {
@@ -963,22 +1121,22 @@ let PlayPausewithThumbnailClick = (event)=>{
 //   navigator.mediaSession.setActionHandler('nexttrack', function() {});
 // }
 
-  // if ('mediaSession' in navigator) {
+// if ('mediaSession' in navigator) {
 
-  //   navigator.mediaSession.metadata = new MediaMetadata({
-  //   title: 'Never Gonna Give You Up',
-  //   artist: 'Rick Astley',
-  //   album: 'Whenever You Need Somebody',
-  //   artwork: [
-  //       { src: 'https://dummyimage.com/96x96',   sizes: '96x96',   type: 'image/png' },
-  //       { src: 'https://dummyimage.com/128x128', sizes: '128x128', type: 'image/png' },
-  //       { src: 'https://dummyimage.com/192x192', sizes: '192x192', type: 'image/png' },
-  //       { src: 'https://dummyimage.com/256x256', sizes: '256x256', type: 'image/png' },
-  //       { src: 'https://dummyimage.com/384x384', sizes: '384x384', type: 'image/png' },
-  //       { src: 'https://dummyimage.com/512x512', sizes: '512x512', type: 'image/png' },
-  //   ]
-  //   });
-  // }
+//   navigator.mediaSession.metadata = new MediaMetadata({
+//   title: 'Never Gonna Give You Up',
+//   artist: 'Rick Astley',
+//   album: 'Whenever You Need Somebody',
+//   artwork: [
+//       { src: 'https://dummyimage.com/96x96',   sizes: '96x96',   type: 'image/png' },
+//       { src: 'https://dummyimage.com/128x128', sizes: '128x128', type: 'image/png' },
+//       { src: 'https://dummyimage.com/192x192', sizes: '192x192', type: 'image/png' },
+//       { src: 'https://dummyimage.com/256x256', sizes: '256x256', type: 'image/png' },
+//       { src: 'https://dummyimage.com/384x384', sizes: '384x384', type: 'image/png' },
+//       { src: 'https://dummyimage.com/512x512', sizes: '512x512', type: 'image/png' },
+//   ]
+//   });
+// }
 
 // shortHistory
 // shortfaveroite
