@@ -137,25 +137,24 @@ def ExtractPlaylistVideos(request):
         else:
             querystring = {"id":playlistid,'next':next}
 
+        url = "https://youtube-search-and-download.p.rapidapi.com/playlist"
+
+        
+
         headers = {
             "X-RapidAPI-Key": "8cacaff4e4msh4fee6493b9185f4p1fec8cjsna481c4a0f8b0",
             "X-RapidAPI-Host": "youtube-search-and-download.p.rapidapi.com"
         }
 
-        response =  requests.get(url, headers=headers, params=querystring)
+        response = requests.get(url, headers=headers, params=querystring)
+
+
         urlData = response.json()
         contentUrls = contentUrls+urlData.get('contents')
 
-        print(len(contentUrls))  
         if urlData.get('next')!=None:
             GetNext(playlistid=playlistid,next=urlData.get('next'))
             
-        # while True:
-            
-        #     print(urlData)  
-        #    
-        #        break
-        #     GetNext(playlistid=playlistid,next=urlData.get('next'))
 
         urlData['contents'] = contentUrls
         return urlData
@@ -170,7 +169,6 @@ def ExtractPlaylistVideos(request):
 
         if playlistid!=None:
 
-            url = "https://youtube-search-and-download.p.rapidapi.com/playlist"
             
             urlData = GetNext(playlistid=playlistid)
 
@@ -199,3 +197,30 @@ def ExtractPlaylistVideos(request):
                 
     return HttpResponse(json.dumps(mainContentData))
 
+def SearchNewItem(request):
+    if request.method=="POST":
+        NewdataItem = {}
+        query = request.POST.get("query")
+
+        # import requests
+
+        # url = "https://yt-api.p.rapidapi.com/search"
+
+        # querystring = {"query":query}
+
+        # headers = {
+        #     "X-RapidAPI-Key": "8cacaff4e4msh4fee6493b9185f4p1fec8cjsna481c4a0f8b0",
+        #     "X-RapidAPI-Host": "yt-api.p.rapidapi.com"
+        # }
+
+        # response = requests.get(url, headers=headers, params=querystring)
+
+        # newdata = response.json()
+        with open('searchdata.json','rb') as r:
+            newdata = json.loads(r.read())
+
+        NewdataItem['videos'] = [item for item in newdata['data']['data'] if item['type']=='video']
+
+        return HttpResponse(json.dumps(NewdataItem))
+
+    return HttpResponse(json.dumps({}))

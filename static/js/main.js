@@ -76,14 +76,10 @@ volumecontrol.addEventListener('focusout', () => {
 })
 
 
-
 NextBtn.addEventListener('click', Nextsong)
 PreBtn.addEventListener('click', Presong)
 preSkipBtn.addEventListener('click', SkipeNext)
 nextSkipBtn.addEventListener('click', SkiptPre)
-
-
-
 
 AudioConnector.onplay = (event) => {
   PlayButton.innerHTML = '<i class="bi bi-pause-circle fs-2 text-primary"></i>'
@@ -714,6 +710,7 @@ let LoadFirstSong = () => {
   let Videoid = GetUrlParams('v')
   if (Videoid != null || Videoid != undefined) {
     let firstUrl = `https://www.youtube.com/watch?v=${Videoid}`
+    console.log("Requesting... for first")
     SendLoadRequest(firstUrl)
 
   }
@@ -721,6 +718,7 @@ let LoadFirstSong = () => {
 }
 
 let LoadLocalPlaylist = async () => {
+  console.log("loading playlist...........")
 
   if (GetUrlParams('list') != null) {
 
@@ -732,6 +730,7 @@ let LoadLocalPlaylist = async () => {
       let dataurls = { 'videoid': GetUrlParams('list'), 'csrfmiddlewaretoken': TokenCsrf.value }
 
       $(() => {
+        console.log("loading playlist...........")
         // function will get executed  
         // on click of submit button 
         $.ajax({
@@ -740,6 +739,7 @@ let LoadLocalPlaylist = async () => {
           data: dataurls,
           success: function (data) {
             let playlistUrls = JSON.parse(data)
+            console.log(playlistUrls)
             LoadPlaylistDataInPLaylistBox(playlistUrls)
           },
           error: function (data) {
@@ -842,8 +842,6 @@ deleteAllPlaylist.addEventListener('click',(event)=>{
   deleteAllPlaylist.setAttribute('disabled','true')
   deleteOnePlatlist.setAttribute('disabled','true')
   
-
-
 })
 
 
@@ -852,7 +850,7 @@ window.onload = async () => {
   await GetLocalVolume()
   await LoadFirstSong()  
   await LoadLocalPlaylist()
-  await ShowSavedPlaylist()
+  // await ShowSavedPlaylist()
   await insetFaveroiteVideoInBox()
 
 }
@@ -929,8 +927,16 @@ let CopyShareUrl = (target, info) => {
   }
 }
 
-
-
+let PlayPausewithThumbnailClick = (event)=>{
+    if (AudioConnector.paused) {
+      AudioConnector.play() 
+      console.log('playing...')
+    }
+    else{
+      AudioConnector.pause()
+      console.log('Paused ...')
+    }
+}
 
 // |||||||||||||||||||||||||||||||||||>>> Modifying chrome media player notification for android notifications <<<||||||||||||||||||||||||||
 // if ('mediaSession' in navigator) {
