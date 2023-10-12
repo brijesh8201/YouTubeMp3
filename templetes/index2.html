@@ -239,7 +239,7 @@
           </div>
             
           <div class="progress position-absolute bottom-0 w-100 bg-transparent" role="progressbar" aria-label="info 1px high"  aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style="height: 1px">
-            <div class="progress-bar" style="width:25%;height:2px; background: linear-gradient(45deg, red, blue);"></div>
+            <div class="progress-bar" id="processbarstatus" style="width:0%;height:2px; background: linear-gradient(45deg, red, blue);"></div>
           </div>
 
       </div>
@@ -561,6 +561,7 @@
       event.preventDefault()
       let inputBox = document.getElementById('searchNewitem').firstElementChild
       let Newsearchbox = document.getElementById('Newsearchbox')
+      let processbarstatus = document.getElementById('processbarstatus')
 
       console.clear()
       if(inputBox.value!=''){
@@ -568,15 +569,25 @@
         var url = '/search/';
         let TokenCsrf = document.querySelector('input[name="csrfmiddlewaretoken"]')
         let dataurls = { 'query': inputBox.value, 'csrfmiddlewaretoken': TokenCsrf.value }
-
+        processbarstatus.style.width = '10%'
           $.ajax({
             type: "POST",
             url: url,
             data: dataurls,
             success: function (data) {
+            processbarstatus.style.width = '30%'
+
               searchdata = JSON.parse(data)
-              console.log(searchdata)
+              processbarstatus.style.width = '60%'
+
               LoadSearchedVideo(searchdata['videos'])
+              processbarstatus.style.width = '100%'
+              setTimeout(()=>{
+                processbarstatus.style.width = '0%'
+
+              },800)
+
+
             },
             error: function (data) {
               console.log("Getting an error to search query")
@@ -637,6 +648,7 @@
 
 
     }
+  
   </script>
         
 </body>

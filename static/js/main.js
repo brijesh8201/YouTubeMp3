@@ -457,7 +457,7 @@ let GetPlaylit = (name=null) => {
   playlist = JSON.parse(localStorage.getItem('playlist'))
 
   if (playlist == undefined) {
-    return {}
+    return playlist
   }
   else if(name==null){
     return playlist
@@ -858,16 +858,16 @@ window.onload = async () => {
 // ________________________________ Adding Keyboard Shortcuts __________________________________________//
 document.onkeyup = function (e) {
 
-  if (e.which == 32) {
+  if (e.shiftKey && e.which == 32) {
     PlayButton.click()
   }
-  if (e.which == 78) {
+  if (e.shiftKey && e.which == 78) {
     NextBtn.click()
   }
-  if (e.which == 66) {
+  if (e.shiftKey && e.which == 66) {
     PreBtn.click()
   }
-  if (e.which == 13) {
+  if (e.shiftKey && e.which == 13) {
     SearchForurl.click()
   }
   if (e.shiftKey && e.which == 70) {

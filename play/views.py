@@ -150,6 +150,7 @@ def ExtractPlaylistVideos(request):
 
 
         urlData = response.json()
+        print("Platlist data is : ",urlData)
         contentUrls = contentUrls+urlData.get('contents')
 
         if urlData.get('next')!=None:
@@ -202,24 +203,21 @@ def SearchNewItem(request):
         NewdataItem = {}
         query = request.POST.get("query")
 
-        # import requests
 
-        # url = "https://yt-api.p.rapidapi.com/search"
+        url = "https://yt-api.p.rapidapi.com/search"
 
-        # querystring = {"query":query}
+        querystring = {"query":query}
 
-        # headers = {
-        #     "X-RapidAPI-Key": "8cacaff4e4msh4fee6493b9185f4p1fec8cjsna481c4a0f8b0",
-        #     "X-RapidAPI-Host": "yt-api.p.rapidapi.com"
-        # }
+        headers = {
+            "X-RapidAPI-Key": "8cacaff4e4msh4fee6493b9185f4p1fec8cjsna481c4a0f8b0",
+            "X-RapidAPI-Host": "yt-api.p.rapidapi.com"
+        }
 
-        # response = requests.get(url, headers=headers, params=querystring)
+        response = requests.get(url, headers=headers, params=querystring)
 
-        # newdata = response.json()
-        with open('searchdata.json','rb') as r:
-            newdata = json.loads(r.read())
+        newdata = response.json()
 
-        NewdataItem['videos'] = [item for item in newdata['data']['data'] if item['type']=='video']
+        NewdataItem['videos'] = [item for item in newdata['data'] if item['type']=='video']
 
         return HttpResponse(json.dumps(NewdataItem))
 
