@@ -960,10 +960,8 @@ $('#searchNewitem').submit((event) => {
         processbarstatus.style.width = '30%'
 
         searchdata = JSON.parse(data)
-        processbarstatus.style.width = '60%'
 
         LoadSearchedVideo(searchdata['videos'])
-        processbarstatus.style.width = '100%'
         setTimeout(() => {
           processbarstatus.style.width = '0%'
 
@@ -1000,6 +998,7 @@ let LoadSearchedVideo = (VideosData) => {
   let SearchContentbox = document.getElementById("SearchContentbox");
   // viewCount videoId title thumbnail lengthText channelTitle
   let videoStr = ``
+  let status = 50
   for (index = 0; index <= VideosData.length; index++) {
     let element = VideosData[index]
     try {
@@ -1024,6 +1023,8 @@ let LoadSearchedVideo = (VideosData) => {
     catch (error) {
       console.log(error)
     }
+    processbarstatus.style.width = `${status}%`
+
   }
 
   SearchContentbox.innerHTML = videoStr
