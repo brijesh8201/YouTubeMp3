@@ -157,7 +157,7 @@
                 
                 <div class="position-absolute end-0 top-0 d-flex flex-column overflow-auto align-items-end sideMenuShortcuts" style="width:150px;z-index:1;height:80%">
                   <div class="my-4"><button id="shortHistory" data-bs-target="#modalforHistoryPlaylist" data-bs-toggle="modal" class="btn"><i class="bi bi-list"></i> <span> Related</span></button> </div>
-                  <div class="my-3"><button id="shortfaveroite" id="issavedtolocalvideo" data-bs-target="#modalformFaveroiteVideos" data-bs-toggle="modal" class="btn"><i class="bi bi-film"></i> <span> videos</span></button></div>
+                  <div class="my-3"><button id="shortfaveroite"  data-bs-target="#modalformFaveroiteVideos" data-bs-toggle="modal" class="btn"><i class="bi bi-film"></i> <span> videos</span></button></div>
                   <div class="my-3 {% if not VideoId %} d-none {% endif %}"><button id="issavedtolocal" class="btn"><i class="bi bi-heart"></i> <span> Save</span></button></div>
                   <div class="my-3 {% if not VideoId %} {% endif %}" id="desktopShareButton"><button id="shortShare" data-bs-target="#modalformDesktopshare" data-bs-toggle="modal" class="btn"><i class="bi bi-share-fill"></i> <span> Share</span></button></div>
                   <!-- <div class="my-3 {% if not VideoId %} {% endif %}" id="phoneshareButton"><button id="shortShare" onclick="SharePage()" class="btn"><i class="bi bi-share-fill"></i> <span> Share</span></button></div> -->
@@ -298,7 +298,7 @@
 
               </div>
               <div class="col">
-                  <img id="playlistThumbnail" src="{% static 'files/back.jpg' %}" class="rounded shodow-lg" style="width: 90%;"
+                  <img id="playlistThumbnail" src="{% static 'files/back.jpg' %}" class="rounded shodow-lg" style="width:90%;"
                     alt="">
     
               </div>
@@ -322,23 +322,31 @@
 <div class="modal fade backCardImage" id="modalformFaveroiteVideos" aria-hidden="true"
   aria-labelledby="exampleModalToggleLabel" tabindex="-1">
   <div class="modal-dialog modal-xl">
-    <div class="modal-content" id="modalBackImgsavedvideo" style="background-image:url('{% static 'files/back.jpg' %}')">
-      <div class="modal-header backCardImage position-relative ">
+    <div class="modal-content" id="modalBackImgsavedvideo" style="background-image:url('{% static 'files/back.jpg' %}');background-size: cover;">
+      <div class="modal-header backCardImage position-relative d-block p-1">
         <button type="button" class="btn-close position-absolute top-0 m-2 end-0 bg-secondary" data-bs-dismiss="modal" aria-label="Close"></button>
         
         <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
         <div class="row w-100">
           <div class="col">
-            <h1 class="modal-title fs-6 text-white fs-1" id="playlistTitlesavedvideo">Your Favourite videos</h1>
+            <h1 class="modal-title text-white fs-2" id="playlistTitlesavedvideo">Your Favourite videos</h1>
             <p class="card-text text-white m-0" id="playlisLenghtsavedvideo"></p>
             <p class="card-text text-white m-0" id="playlisViewsavedvideo"></p>
           </div>
-          <div class="col text-end">
+          <!-- <div class="col text-end">
             <img id="playlistThumbnailsavedvideo" src="{% static 'files/back.jpg' %}" style="width: 70%;"
               alt="">
 
-          </div>
+          </div> -->
         </div>
+
+        <div class="row justify-content-start w-100">
+          <button disabled style="width:fit-content;" id="PlayFaveroiteQueue" class="mx-auto btn"><i class="bi fs-3 text-white bi-music-note-list"></i></button>
+          <button disabled style="width:fit-content;" id="deleteOneFaveroite" class="mx-auto btn"><i class="bi fs-3 text-white bi-trash3"></i></button>
+          <button style="width:fit-content;" id="deleteAllFaveroite" class="mx-auto btn"><i class="bi fs-3 text-white bi-radioactive"></i></button>
+          <button style="width:fit-content;" id="cancleFaveroiteSelection" class="mx-auto btn d-none"><i class="fs-3 text-white bi bi-x-circle"></i></button>
+        </div>
+
       </div>
       <div class="modal-body p-0 m-0">
         <div class="d-flex justify-content-start align-item-start flex-wrap backCardImage" id="insertFaveroitePlaylistVideo">
@@ -355,26 +363,27 @@
 <div class="modal fade backCardImage" id="modalforHistoryPlaylist" aria-hidden="true"
   aria-labelledby="exampleModalToggleLabel" tabindex="-1">
   <div class="modal-dialog modal-xl ">
-    <div class="modal-content" id="modalBackImgsaved" style="background-image:url('{% static 'files/back.jpg' %}')">
-      <div class="modal-header backCardImage position-relative flex-column">
+    <div class="modal-content" id="modalBackImgsaved" style="background-image:url('{% static 'files/back.jpg' %}');background-size: cover;">
+      <div class="modal-header backCardImage position-relative flex-column p-1">
         <button type="button" class="btn-close position-absolute top-0 m-2 end-0 bg-secondary" data-bs-dismiss="modal" aria-label="Close"></button>
         
         <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
         <div class="row w-100 flex-wrap-reverse">
           <div class="col">
-            <h1 class="modal-title fs-6 text-white fs-4" id="playlistTitlesaved">Auto Saved Playlists</h1>
+            <h1 class="modal-title text-white fs-2" id="playlistTitlesaved">Auto Saved Playlists</h1>
             <p class="card-text text-white m-0" id="playlisLenghtsaved"></p>
             <p class="card-text text-white m-0" id="playlisViewsaved"></p>
           </div>
-          <div class="col text-end">
-            <img id="playlistThumbnailsaved" src="{% static 'files/back.jpg' %}" style="width: 70%;"
+          <!-- <div class="col text-end">
+            <img id="playlistThumbnailsaved" src="{% static 'files/back.jpg' %}" style="width:50%;"
               alt="">
 
-          </div>
+          </div> -->
         </div>
         <div class="row justify-content-start w-100">
-          <button disabled style="width:fit-content;" id="deleteOnePlatlist" class="mx-3 btn btn-info">Delete</button>
-          <button disabled style="width:fit-content;" id="deleteAllPlaylist" class="mx-3 btn btn-success">Delete All</button>
+          <button disabled style="width:fit-content;" id="deleteOnePlatlist" class="mx-auto btn "><i class="bi fs-3 text-white bi-trash3"></i></button>
+          <button style="width:fit-content;" id="deleteAllPlaylist" class="mx-auto btn "><i class="bi fs-3 text-white bi-radioactive"></i></button>
+          <button style="width:fit-content;" id="canclePlaylistSelection" class="mx-auto btn d-none"><i class="fs-3 text-white bi bi-x-circle"></i></button>
         </div>
       </div>
       <div class="modal-body p-0 m-0">

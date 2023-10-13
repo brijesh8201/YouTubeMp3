@@ -35,6 +35,7 @@ let ShareImage = document.getElementById('ShareImage')
 
 let shortHistory = document.getElementById('shortHistory')
 let shortfaveroite = document.getElementById('shortfaveroite')
+let issavedtolocalvideo = document.getElementById('issavedtolocalvideo')
 let shortShare = document.getElementById('shortShare')
 let downloadNowbtn = document.getElementById('downloadNowbtn')
 let VolumeControlBox = document.getElementById('VolumeControlBox')
@@ -42,13 +43,17 @@ let preSkipBtn = document.getElementById('preSkipBtn')
 let nextSkipBtn = document.getElementById('nextSkipBtn')
 let deleteOnePlatlist = document.getElementById('deleteOnePlatlist')
 let deleteAllPlaylist = document.getElementById('deleteAllPlaylist')
-
+let canclePlaylistSelection = document.getElementById('canclePlaylistSelection')
+let deleteOneFaveroite = document.getElementById('deleteOneFaveroite')
+let deleteAllFaveroite = document.getElementById('deleteAllFaveroite')
+let cancleFaveroiteSelection = document.getElementById('cancleFaveroiteSelection')
 
 
 PlayButton.style.border = 'none !important'
 let RangeInterval = 0
 let CurrentPlayingSongsList = {}
 let CurrentPlayingSongsListIndex = -1
+console.log(deleteAllPlaylist)
 
 let volumecontrolbtn = document.getElementById('volumecontrolbtn')
 let volumecontrols = document.getElementById('volumecontrol')
@@ -271,7 +276,9 @@ let InsertPLaylistVideosFromList = (urls) => {
 
   }
   insertPlayingPlaylistVideo.innerHTML = strVideotheme
+  ShowSavedPlaylist()
 }
+
 
 function replaceUrlParam(index, id) {
   let Currenturl = window.location.href
@@ -554,18 +561,29 @@ function checckIsSaved() {
 
 let insetFaveroiteVideoInBox = () => {
   let savedVideodata = GetSaved()
-  let strVideotheme = ``
-  playlisLenghtsavedvideo.innerHTML = 'Length : ' + Object.keys(savedVideodata).length + " videos"
 
-  for (let index = 0; index < Object.keys(savedVideodata).length; index++) {
-    const element = savedVideodata[Object.keys(savedVideodata)[index]];
+  
+    let strVideotheme = ``
+    playlisLenghtsavedvideo.innerHTML = 'Length : ' + Object.keys(savedVideodata).length
 
-    strVideotheme += `<div class='d-flex justify-content-center m-auto playlistBox' ><span class='text-white'>${index + 1}. </span><a href="/watch?v=${GetVideoId(element)}" class="card m-auto my-1" style="width:18rem;">
-   <img  src="https://img.youtube.com/vi/${GetVideoId(element)}/maxresdefault.jpg" class="card-img-top" alt="...">
+    for (let index = 0; index < Object.keys(savedVideodata).length; index++) {
+      const element = savedVideodata[Object.keys(savedVideodata)[index]];
+
+      strVideotheme += `<div class='d-flex justify-content-center m-auto playlistBox position-relative' ><span class='text-white'>${index + 1}. </span><a href="/watch?v=${GetVideoId(element)}" class="card m-auto my-1" style="width:18rem;">
+    <input type="checkbox" onclick="SelectForDeleteFavorite()" data-favorite="${GetVideoId(element)}"  class="selectedFavorite position-absolute top-0 start-0" style="width:15px;height:15px;">
     
-  </a></div>`
+    <img  src="https://img.youtube.com/vi/${GetVideoId(element)}/maxresdefault.jpg" class="card-img-top" alt="...">
+    
+    </a></div>`
+    }
+    insertFaveroitePlaylistVideo.innerHTML = strVideotheme
+    shortfaveroite.parentElement.classList.remove('d-none')
+
+  
+
+  if (Object.keys(savedVideodata).length<1) {
+    shortfaveroite.parentElement.classList.add('d-none')
   }
-  insertFaveroitePlaylistVideo.innerHTML = strVideotheme
 
 }
 
@@ -669,8 +687,7 @@ function ShowSavedPlaylist() {
   savedplaylist = JSON.parse(localStorage.getItem('playlist'))
   let TotalVideos = 0
 
-  console.log(savedplaylist)
-  
+
   if (savedplaylist != undefined) {
     for (let index = 0; index < Object.keys(savedplaylist).length; index++) {
 
@@ -699,13 +716,13 @@ function ShowSavedPlaylist() {
     playlisViewsaved.innerHTML = `Count : ${TotalVideos} videos`
     insertSavedPlaylistInBox.innerHTML = savedplaylistStr;
     deleteAllPlaylist.removeAttribute('disabled')
+    shortHistory.parentElement.classList.remove('d-none')
 
   }
 
   if (Object.keys(savedplaylist).length < 1) {
-    deleteAllPlaylist.setAttribute('disabled', 'true')
+    shortHistory.parentElement.classList.add('d-none')
   }
-
 
 }
 
@@ -793,7 +810,7 @@ AudioConnector.addEventListener('loadstart', function () {
 
 });
 
-
+// |||||||||||||||||||||||||||||||||||||||| Deleting auto saved playlist one by one or all playlists at once ||||||||||||||||||||||||||||||||
 let DeleteSelectedPlaylists = () => {
   let selecteplaylist = document.querySelectorAll('.selectedPlaylist')
 
@@ -803,12 +820,16 @@ let DeleteSelectedPlaylists = () => {
     if (element.checked) {
       checkBox = true
       deleteOnePlatlist.removeAttribute('disabled')
+      canclePlaylistSelection.classList.remove('d-none')
+
       break
     }
 
   }
   if (!checkBox) {
     deleteOnePlatlist.setAttribute('disabled', 'true')
+    canclePlaylistSelection.classList.add('d-none')
+
 
   }
 }
@@ -829,6 +850,7 @@ deleteOnePlatlist.addEventListener('click', (event) => {
 
   if (playlistdataLength < 1) {
     deleteAllPlaylist.setAttribute('disabled', 'true')
+    canclePlaylistSelection.classList.add('d-none')
   }
 
 })
@@ -838,7 +860,85 @@ deleteAllPlaylist.addEventListener('click', (event) => {
   ShowSavedPlaylist()
   deleteAllPlaylist.setAttribute('disabled', 'true')
   deleteOnePlatlist.setAttribute('disabled', 'true')
+  canclePlaylistSelection.classList.add('d-none')
 
+
+})
+canclePlaylistSelection.addEventListener('click', (event) => {
+
+  let selecteplaylist = document.querySelectorAll('.selectedPlaylist')
+
+  for (let index = 0; index < selecteplaylist.length; index++) {
+    const element = selecteplaylist[index];
+    if (element.checked) {
+      element.checked = 0;
+    }
+  }
+
+  canclePlaylistSelection.classList.add('d-none')
+  deleteOnePlatlist.setAttribute('disabled', 'true')
+
+})
+
+// |||||||||||||||||||||||||||||||||||||||| Deleting favorite videos one by one or whole playlist |||||||||||||||||||||||||||||||||||||||||
+let SelectForDeleteFavorite = () => {
+  let selectedFavorite = document.querySelectorAll('.selectedFavorite')
+  let checkBox = false;
+
+  for (let index = 0; index < selectedFavorite.length; index++) {
+    const element = selectedFavorite[index];
+    if (element.checked) {
+      deleteOneFaveroite.removeAttribute('disabled')
+      cancleFaveroiteSelection.classList.remove('d-none')
+      checkBox = true;
+      break
+    }
+
+  }
+  if (!checkBox) {
+    deleteOneFaveroite.setAttribute('disabled', 'true')
+    cancleFaveroiteSelection.classList.add('d-none')
+
+
+  }
+}
+
+deleteOneFaveroite.addEventListener("click", async (event) => {
+  let AllFavotite = document.querySelectorAll('.selectedFavorite')
+  for (let index = 0; index < AllFavotite.length; index++) {
+    const element = AllFavotite[index];
+
+    if (element.checked) {
+      console.log(element.dataset.favorite)
+      DeleteSaved(element.dataset.favorite)
+    }
+  }
+
+  insetFaveroiteVideoInBox()
+  cancleFaveroiteSelection.classList.add('d-none')
+  deleteAllFaveroite.setAttribute('disabled', 'true')
+  deleteOneFaveroite.setAttribute('disabled', 'true')
+})
+
+deleteAllFaveroite.addEventListener("click", (event) => {
+  ClearSaved()
+  insetFaveroiteVideoInBox()
+  cancleFaveroiteSelection.classList.add('d-none')
+  deleteAllFaveroite.setAttribute('disabled', 'true')
+  deleteOneFaveroite.setAttribute('disabled', 'true')
+
+})
+cancleFaveroiteSelection.addEventListener("click", (event) => {
+  let selectedFavorite = document.querySelectorAll('.selectedFavorite')
+
+  for (let index = 0; index < selectedFavorite.length; index++) {
+    const element = selectedFavorite[index];
+    if (element.checked) {
+      element.checked = 0
+    }
+  }
+  deleteOneFaveroite.setAttribute('disabled', 'true')
+  cancleFaveroiteSelection.classList.add('d-none')
 })
 
 
@@ -1016,7 +1116,7 @@ let LoadSearchedVideo = (VideosData) => {
     catch (error) {
       console.log(error)
     }
-    
+
   }
 
   SearchContentbox.innerHTML = videoStr
