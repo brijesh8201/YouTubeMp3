@@ -47,13 +47,15 @@ let canclePlaylistSelection = document.getElementById('canclePlaylistSelection')
 let deleteOneFaveroite = document.getElementById('deleteOneFaveroite')
 let deleteAllFaveroite = document.getElementById('deleteAllFaveroite')
 let cancleFaveroiteSelection = document.getElementById('cancleFaveroiteSelection')
+let PlayFaveroiteQueue = document.getElementById('PlayFaveroiteQueue')
+let playlisViewsavedvideo = document.getElementById('playlisViewsavedvideo')
 
 
 PlayButton.style.border = 'none !important'
 let RangeInterval = 0
 let CurrentPlayingSongsList = {}
+let PlayingSongTitle = ''
 let CurrentPlayingSongsListIndex = -1
-console.log(deleteAllPlaylist)
 
 let volumecontrolbtn = document.getElementById('volumecontrolbtn')
 let volumecontrols = document.getElementById('volumecontrol')
@@ -222,10 +224,8 @@ let LoadPlaylistDataInPLaylistBox = (playlistUrls) => {
   playlistTitle.innerHTML = playlistUrls['title']
   PlaylistlastUpdated.innerHTML = `Last Update: ` + playlistUrls['lastUpdated']
 
-  playlistThumbnail.src = `https://img.youtube.com/vi/${GetVideoId(playlistUrls['Urls'][0]['url'])}/maxresdefault.jpg`
 
   // // Inserting playlist video into playlist box
-  console.log(playlistUrls)
   InsertPLaylistVideosFromList(playlistUrls['Urls'])
 
   for (let index = 0; index < disabledBtns.length; index++) {
@@ -237,8 +237,9 @@ let LoadPlaylistDataInPLaylistBox = (playlistUrls) => {
   LoadList.classList.remove('d-none')
   LoadList.previousElementSibling.classList.add('d-none')
   CreateLocalEntry(GetUrlParams('list'), playlistUrls)
-
 }
+
+
 
 let GetVideoId = (url) => {
   var videoURL = url;
@@ -254,6 +255,7 @@ let InsertPLaylistVideosFromList = (urls) => {
   playlistId = GetUrlParams('list')
   let strVideotheme = ``
   modalBackImg.style.backgroundImage = `url('https://img.youtube.com/vi/${GetVideoId(urls[0]['url'])}/maxresdefault.jpg')`
+  playlistThumbnail.src = `https://img.youtube.com/vi/${GetVideoId(urls[0]['url'])}/maxresdefault.jpg`
 
   CurrentPlayingSongsList = {}
 
@@ -262,16 +264,16 @@ let InsertPLaylistVideosFromList = (urls) => {
     const element = urls[index];
     CurrentPlayingSongsList[index] = `https://www.youtube.com/watch?v=${GetVideoId(element['url'])}`
 
-    strVideotheme += 
+    strVideotheme +=
       `<div class='d-flex justify-content-center m-auto playlistBox' ><span class='text-white'>${index + 1}.</span>
           <a href="/watch?v=${GetVideoId(element['url'])}&list=${playlistId}&index=${index}" 
           class="card m-auto my-1 text-truncate" 
           style="width:18rem;text-decoration:none;background-image:url('https://img.youtube.com/vi/${GetVideoId(element['url'])}/maxresdefault.jpg');
             `
-          if(GetVideoId(element['url'])==GetUrlParams('v')){
-            strVideotheme += `border:2px solid cyan !important`
-          }
-    strVideotheme +=       `">
+    if (GetVideoId(element['url']) == GetUrlParams('v')) {
+      strVideotheme += `border:2px solid cyan !important`
+    }
+    strVideotheme += `">
                 <img  src="https://img.youtube.com/vi/${GetVideoId(element['url'])}/maxresdefault.jpg" class="card-img-top" alt="...">
                 <span class="playlistTitle text-truncate px-1" style="color: #00ffe5 !important;background: #0000006e;">${element['title']}</span>
           </a>
@@ -394,6 +396,7 @@ let LoadNewSong = (url, videoId, title, filename) => {
   searchUrlsource.placeholder = `${title}`
   downloadNowbtn.href = url
   downloadNowbtn.download = url + '&filename=' + filename
+  PlayingSongTitle = title
   AudioConnector.play()
   shareTitle.setAttribute('content', title)
   ShareImage.setAttribute('content', `https://img.youtube.com/vi/${GetVideoId(videoId)}/maxresdefault.jpg`)
@@ -468,13 +471,10 @@ let GetPlaylit = (name = null) => {
 
   playlist = JSON.parse(localStorage.getItem('playlist'))
 
-  if (playlist == undefined) {
-    return playlist
+  if (playlist != undefined) {
+    return playlist[name]
   }
-  else if (name == null) {
-    return playlist
-  }
-  return playlist[name]
+  return {}
 
 
 }
@@ -489,22 +489,33 @@ let DeletePlaylist = (savedId) => {
 
 // _+_______________________________________________________________Creating history______________________________________________________________
 
-let CreateLocalSaved = (name, data) => {
+let CreateLocalSaved = (name, data, title) => {
 
   if (localStorage.getItem('saved') == null) {
-    localStorage.setItem('saved', JSON.stringify({}))
+    localStorage.setItem('saved', JSON.stringify({ 'Urls': {} }))
   }
 
   let playlistData = JSON.parse(localStorage.getItem('saved'))
 
-  playlistData[name] = data
+  let date = new Date()
+  playlistData['lastUdpate'] = date.toDateString()
+  playlistData['title'] = 'Your Favorite saved videos playlist'
+  playlistData['views'] = '0'
+
+  if (playlistData['Urls'] == undefined) {
+    playlistData['Urls'] = {}
+  }
+
+  playlistData['Urls'][name] = { "title": title, "url": data }
+
   localStorage.setItem('saved', JSON.stringify(playlistData))
+
 
 }
 
 let DeleteSaved = (savedId) => {
   let playlistData = JSON.parse(localStorage.getItem('saved'))
-  delete playlistData[savedId]
+  delete playlistData['Urls'][savedId]
   localStorage.setItem('saved', JSON.stringify(playlistData))
 
 }
@@ -531,15 +542,19 @@ issavedtolocal.addEventListener('click', () => {
 
   let playlistData = JSON.parse(localStorage.getItem('saved'))
   let saveToVideoId = GetUrlParams('v')
+  let title = shareTitle.getAttribute('content')
 
-  if (Object.keys(playlistData).includes(saveToVideoId)) {
+  if(playlistData['Urls']==undefined || playlistData['Urls']==null){
+    playlistData['Urls'] = {}
+  }
 
+  if (Object.keys(playlistData["Urls"]).includes(saveToVideoId)) {
     DeleteSaved(saveToVideoId)
     issavedtolocal.innerHTML = '<i class="bi bi-heart"></i> <span>Save</span>'
   }
   else {
     let youtubemp3Saveurl = `https://www.youtube.com/watch?v=${saveToVideoId}`
-    CreateLocalSaved(saveToVideoId, youtubemp3Saveurl)
+    CreateLocalSaved(saveToVideoId, youtubemp3Saveurl, title)
     issavedtolocal.innerHTML = '<i class="bi bi-heart-fill text-danger"></i><span>Saved</span>'
   }
 
@@ -556,7 +571,11 @@ function checckIsSaved() {
 
   let saveToVideoId = GetUrlParams('v')
   let playlistData = JSON.parse(localStorage.getItem('saved'))
-  savedKeys = Object.keys(playlistData)
+  if(playlistData['Urls']==undefined || playlistData['Urls']==null){
+    playlistData['Urls'] = {}
+  }
+  savedKeys = Object.keys(playlistData['Urls'])
+
 
   if (savedKeys.includes(saveToVideoId)) {
     issavedtolocal.innerHTML = '<i class="bi bi-heart-fill text-danger"></i> <span>Saved</span>'
@@ -566,26 +585,30 @@ function checckIsSaved() {
 let insetFaveroiteVideoInBox = () => {
   let savedVideodata = GetSaved()
 
-  
-    let strVideotheme = ``
-    playlisLenghtsavedvideo.innerHTML = 'Length : ' + Object.keys(savedVideodata).length
+  let strVideotheme = ``
+  if(savedVideodata['Urls']==undefined || savedVideodata['Urls']==null){
+    savedVideodata['Urls'] = {}
+  }
+  playlisLenghtsavedvideo.innerHTML = 'Length : ' + Object.keys(savedVideodata['Urls']).length+" videos"
+  playlisViewsavedvideo.innerHTML = 'Last Update : ' + savedVideodata['lastUdpate']
 
-    for (let index = 0; index < Object.keys(savedVideodata).length; index++) {
-      const element = savedVideodata[Object.keys(savedVideodata)[index]];
+  for (let index = 0; index < Object.keys(savedVideodata['Urls']).length; index++) {
+    const element = savedVideodata['Urls'][Object.keys(savedVideodata['Urls'])[index]];
 
-      strVideotheme += `<div class='d-flex justify-content-center m-auto playlistBox position-relative' ><span class='text-white'>${index + 1}. </span><a href="/watch?v=${GetVideoId(element)}" class="card m-auto my-1" style="width:18rem;">
-    <input type="checkbox" onclick="SelectForDeleteFavorite()" data-favorite="${GetVideoId(element)}"  class="selectedFavorite position-absolute top-0 start-0" style="width:15px;height:15px;">
-    
-    <img  src="https://img.youtube.com/vi/${GetVideoId(element)}/maxresdefault.jpg" class="card-img-top" alt="...">
-    
+    strVideotheme += `<div class='d-flex justify-content-center m-auto playlistBox' ><span class='text-white'>${index + 1}. </span><a href="/watch?v=${GetVideoId(element['url'])}" class="card m-auto my-1 text-truncate position-relative" style="width:18rem;text-decoration:none;background-image:url('https://img.youtube.com/vi/${GetVideoId(element['url'])}/maxresdefault.jpg')">
+    <input type="checkbox" onclick="SelectForDeleteFavorite()" data-favorite="${GetVideoId(element['url'])}"  class="selectedFavorite position-absolute top-0 start-0" style="width:15px;height:15px;">
+
+      <img  src="https://img.youtube.com/vi/${GetVideoId(element['url'])}/maxresdefault.jpg" class="card-img-top" alt="...">
+      <span class="playlistTitle text-truncate px-1" style="color: #00ffe5 !important;background: #0000006e;">${element['title']}</span>
     </a></div>`
-    }
-    insertFaveroitePlaylistVideo.innerHTML = strVideotheme
-    shortfaveroite.parentElement.classList.remove('d-none')
 
-  
 
-  if (Object.keys(savedVideodata).length<1) {
+  }
+  insertFaveroitePlaylistVideo.innerHTML = strVideotheme
+  shortfaveroite.parentElement.classList.remove('d-none')
+
+
+  if (Object.keys(savedVideodata['Urls']).length < 1) {
     shortfaveroite.parentElement.classList.add('d-none')
   }
 
@@ -693,6 +716,7 @@ function ShowSavedPlaylist() {
 
 
   if (savedplaylist != undefined) {
+
     for (let index = 0; index < Object.keys(savedplaylist).length; index++) {
 
       savedKeys = Object.keys(savedplaylist)
@@ -727,6 +751,7 @@ function ShowSavedPlaylist() {
   if (Object.keys(savedplaylist).length < 1) {
     shortHistory.parentElement.classList.add('d-none')
   }
+
 
 }
 
@@ -780,17 +805,21 @@ let LoadLocalPlaylist = async () => {
 
 }
 
-let slowInternetTimeout = null;
 
+PlayFaveroiteQueue.addEventListener("click", (event) => {
+  let favoriteSongs = GetSaved()
+
+  console.log(favoriteSongs)
+
+})
+
+let slowInternetTimeout = null;
 
 AudioConnector.addEventListener('waiting', () => {
   slowInternetTimeout = setTimeout(() => {
-    //show buffering
     PlayButton.innerHTML = `<div class="spinner-grow text-danger" role="status"><span class="sr-only"></span></div>`
-
-
-
   });
+
 });
 
 AudioConnector.addEventListener('playing', () => {
@@ -801,6 +830,7 @@ AudioConnector.addEventListener('playing', () => {
     GetRange()
 
   }
+  ShowNavigationPlayer()
 });
 
 
@@ -913,7 +943,6 @@ deleteOneFaveroite.addEventListener("click", async (event) => {
     const element = AllFavotite[index];
 
     if (element.checked) {
-      console.log(element.dataset.favorite)
       DeleteSaved(element.dataset.favorite)
     }
   }
@@ -1193,28 +1222,31 @@ async function CopyQRimage() {
 
 
 // |||||||||||||||||||||||||||||||||||>>> Modifying chrome media player notification for android notifications <<<||||||||||||||||||||||||||
-if ('mediaSession' in navigator) {
-  console.log("The real title of songs is : ",shareTitle.getAttribute('content'))
-  navigator.mediaSession.metadata = new MediaMetadata({
-  title: shareTitle.getAttribute('content'),
-  artist: 'YouTube Mp3',
-  // album: 'Whenever You Need Somebody',
-  artwork: [
-      { src: ShareImage.getAttribute('content'),  sizes: '96x96',   type: 'image/png' },
-      { src: ShareImage.getAttribute('content'), sizes: '128x128', type: 'image/png' },
-      { src: ShareImage.getAttribute('content'), sizes: '192x192', type: 'image/png' },
-      { src: ShareImage.getAttribute('content'), sizes: '256x256', type: 'image/png' },
-      { src: ShareImage.getAttribute('content'), sizes: '384x384', type: 'image/png' },
-      { src: ShareImage.getAttribute('content'), sizes: '512x512', type: 'image/png' },
-  ]
-  });
 
-  navigator.mediaSession.setActionHandler('play', function() {AudioConnector.play()});
-  navigator.mediaSession.setActionHandler('pause', function() {AudioConnector.pause()});
-  navigator.mediaSession.setActionHandler('seekbackward', function() {SkiptPre()});
-  navigator.mediaSession.setActionHandler('seekforward', function() {SkipeNext()});
-  navigator.mediaSession.setActionHandler('previoustrack', function() {Presong()});
-  navigator.mediaSession.setActionHandler('nexttrack', function() {Nextsong()});
+let ShowNavigationPlayer = (event) => {
+  if ('mediaSession' in navigator) {
+
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: PlayingSongTitle,
+      artist: 'YouTube Mp3',
+      // album: 'Whenever You Need Somebody',
+      artwork: [
+        { src: ShareImage.getAttribute('content'), sizes: '96x96', type: 'image/png' },
+        { src: ShareImage.getAttribute('content'), sizes: '128x128', type: 'image/png' },
+        { src: ShareImage.getAttribute('content'), sizes: '192x192', type: 'image/png' },
+        { src: ShareImage.getAttribute('content'), sizes: '256x256', type: 'image/png' },
+        { src: ShareImage.getAttribute('content'), sizes: '384x384', type: 'image/png' },
+        { src: ShareImage.getAttribute('content'), sizes: '512x512', type: 'image/png' },
+      ]
+    });
+
+    navigator.mediaSession.setActionHandler('play', function () { AudioConnector.play() });
+    navigator.mediaSession.setActionHandler('pause', function () { AudioConnector.pause() });
+    navigator.mediaSession.setActionHandler('seekbackward', function () { SkiptPre() });
+    navigator.mediaSession.setActionHandler('seekforward', function () { SkipeNext() });
+    navigator.mediaSession.setActionHandler('previoustrack', function () { Presong() });
+    navigator.mediaSession.setActionHandler('nexttrack', function () { Nextsong() });
+  }
 }
 
 // shortHistory

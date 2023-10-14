@@ -38,6 +38,9 @@
       .videoWidth{
         max-width: 250px !important;
       }
+      .bg-info{
+        background: linear-gradient(45deg,blue,yellow,green) !important;
+      }
       @media only screen and (max-width: 680px) {
         .fornt_Image {
           height: 75% !important;
@@ -45,6 +48,9 @@
           bottom: 50px!important;
           margin: 0px 2px !important;
   
+        }
+        #playlistThumbnail{
+          width: 100% !important;
         }
         #phoneshareButton{
           display: block !important;
@@ -289,17 +295,15 @@
       <div class="modal-header backCardImage position-relative ">
         <button type="button" class="btn-close position-absolute top-0 m-2 end-0 bg-secondary" data-bs-dismiss="modal" aria-label="Close"></button>
         <div class="row w-100 flex-wrap-reverse ">
-              <div class="col-md">
-                <h1 class="modal-title fs-5 text-white" id="playlistTitle">Lorem ipsum dolor sit amet
-                  consecteturadipisicing elit.</h1>
+              <div class="col-md ">
+                <h1 class="modal-title fs-5 text-white" id="playlistTitle"></h1>
                 <p class="card-text text-white py-0 m-0" id="playlisLenght"></p>
                 <p class="card-text text-white py-0 m-0" id="playlisView"></p>
                 <p class="card-text text-white py-0 m-0" id="PlaylistlastUpdated"></p>
 
               </div>
-              <div class="col-md">
-                  <img id="playlistThumbnail" src="{% static 'files/back.jpg' %}" class="rounded shodow-lg" style="width:90%;"
-                    alt="">
+              <div class="col-md text-end ">
+                  <img id="playlistThumbnail" src="..." class="rounded shodow-lg" style="width:60%;" alt="">
     
               </div>
         </div>
@@ -341,7 +345,7 @@
         </div>
 
         <div class="row justify-content-start w-100">
-          <button style="width:fit-content;" id="PlayFaveroiteQueue" class="mx-auto btn"><i class="bi bi-collection-play fs-3 text-white"></i></button>
+          <button style="width:fit-content;" id="PlayFaveroiteQueue"  class="mx-auto btn"><i class="bi bi-collection-play fs-3 text-white"></i></button>
           <button disabled style="width:fit-content;" id="deleteOneFaveroite" class="mx-auto btn"><i class="bi fs-3 text-white bi-trash3"></i></button>
           <button style="width:fit-content;" id="deleteAllFaveroite" class="mx-auto btn"><i class="bi fs-3 text-white bi-radioactive"></i></button>
           <button style="width:fit-content;" id="cancleFaveroiteSelection" class="mx-auto btn d-none"><i class="fs-3 text-white bi bi-x"></i></button>
