@@ -156,7 +156,7 @@
             <div class="backCard d-flex flex-column justify-content-end align-items-center position-relative w-100 card mx-5 overflow-hidden fornt_Image" style="height:85%;">
                 
                 <div class="position-absolute end-0 top-0 d-flex flex-column overflow-auto align-items-end sideMenuShortcuts" style="width:150px;z-index:1;height:80%">
-                  <div class="my-4"><button id="shortHistory" data-bs-target="#modalforHistoryPlaylist" data-bs-toggle="modal" class="btn"><i class="bi bi-list"></i> <span> Related</span></button> </div>
+                  <div class="my-3"><button id="shortHistory" data-bs-target="#modalforHistoryPlaylist" data-bs-toggle="modal" class="btn"><i class="bi bi-list"></i> <span> Related</span></button> </div>
                   <div class="my-3"><button id="shortfaveroite"  data-bs-target="#modalformFaveroiteVideos" data-bs-toggle="modal" class="btn"><i class="bi bi-film"></i> <span> videos</span></button></div>
                   <div class="my-3 {% if not VideoId %} d-none {% endif %}"><button id="issavedtolocal" class="btn"><i class="bi bi-heart"></i> <span> Save</span></button></div>
                   <div class="my-3 {% if not VideoId %} {% endif %}" id="desktopShareButton"><button id="shortShare" data-bs-target="#modalformDesktopshare" data-bs-toggle="modal" class="btn"><i class="bi bi-share-fill"></i> <span> Share</span></button></div>
@@ -289,7 +289,7 @@
       <div class="modal-header backCardImage position-relative ">
         <button type="button" class="btn-close position-absolute top-0 m-2 end-0 bg-secondary" data-bs-dismiss="modal" aria-label="Close"></button>
         <div class="row w-100 flex-wrap-reverse ">
-              <div class="col-auto">
+              <div class="col-md">
                 <h1 class="modal-title fs-5 text-white" id="playlistTitle">Lorem ipsum dolor sit amet
                   consecteturadipisicing elit.</h1>
                 <p class="card-text text-white py-0 m-0" id="playlisLenght"></p>
@@ -297,7 +297,7 @@
                 <p class="card-text text-white py-0 m-0" id="PlaylistlastUpdated"></p>
 
               </div>
-              <div class="col">
+              <div class="col-md">
                   <img id="playlistThumbnail" src="{% static 'files/back.jpg' %}" class="rounded shodow-lg" style="width:90%;"
                     alt="">
     
@@ -341,10 +341,10 @@
         </div>
 
         <div class="row justify-content-start w-100">
-          <button disabled style="width:fit-content;" id="PlayFaveroiteQueue" class="mx-auto btn"><i class="bi fs-3 text-white bi-music-note-list"></i></button>
+          <button style="width:fit-content;" id="PlayFaveroiteQueue" class="mx-auto btn"><i class="bi bi-collection-play fs-3 text-white"></i></button>
           <button disabled style="width:fit-content;" id="deleteOneFaveroite" class="mx-auto btn"><i class="bi fs-3 text-white bi-trash3"></i></button>
           <button style="width:fit-content;" id="deleteAllFaveroite" class="mx-auto btn"><i class="bi fs-3 text-white bi-radioactive"></i></button>
-          <button style="width:fit-content;" id="cancleFaveroiteSelection" class="mx-auto btn d-none"><i class="fs-3 text-white bi bi-x-circle"></i></button>
+          <button style="width:fit-content;" id="cancleFaveroiteSelection" class="mx-auto btn d-none"><i class="fs-3 text-white bi bi-x"></i></button>
         </div>
 
       </div>

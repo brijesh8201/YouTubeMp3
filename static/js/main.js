@@ -262,16 +262,20 @@ let InsertPLaylistVideosFromList = (urls) => {
     const element = urls[index];
     CurrentPlayingSongsList[index] = `https://www.youtube.com/watch?v=${GetVideoId(element['url'])}`
 
-
-    //  `<div class='d-flex justify-content-center m-auto playlistBox' ><span class='text-white'>${index + 1}. </span><a href="/watch?v=${GetVideoId(element['url'])}&list=${playlistId}" class="card m-auto my-1" style="width:18rem;">
-    //                   <img  src="https://img.youtube.com/vi/${GetVideoId(element['url'])}/maxresdefault.jpg" class="card-img-top" alt="...">
-
-    //                   </a></div>`
-
-    strVideotheme += `<div class='d-flex justify-content-center m-auto playlistBox' ><span class='text-white'>${index + 1}. </span><a href="/watch?v=${GetVideoId(element['url'])}&list=${playlistId}&index=${index}" class="card m-auto my-1 text-truncate" style="width:18rem;text-decoration:none;background-image:url('https://img.youtube.com/vi/${GetVideoId(element['url'])}/maxresdefault.jpg')">
-                              <img  src="https://img.youtube.com/vi/${GetVideoId(element['url'])}/maxresdefault.jpg" class="card-img-top" alt="...">
-                              <span class="playlistTitle text-truncate px-1" style="color: #00ffe5 !important;background: #0000006e;">${element['title']}</span>
-                          </a></div>`
+    strVideotheme += 
+      `<div class='d-flex justify-content-center m-auto playlistBox' ><span class='text-white'>${index + 1}.</span>
+          <a href="/watch?v=${GetVideoId(element['url'])}&list=${playlistId}&index=${index}" 
+          class="card m-auto my-1 text-truncate" 
+          style="width:18rem;text-decoration:none;background-image:url('https://img.youtube.com/vi/${GetVideoId(element['url'])}/maxresdefault.jpg');
+            `
+          if(GetVideoId(element['url'])==GetUrlParams('v')){
+            strVideotheme += `border:2px solid cyan !important`
+          }
+    strVideotheme +=       `">
+                <img  src="https://img.youtube.com/vi/${GetVideoId(element['url'])}/maxresdefault.jpg" class="card-img-top" alt="...">
+                <span class="playlistTitle text-truncate px-1" style="color: #00ffe5 !important;background: #0000006e;">${element['title']}</span>
+          </a>
+      </div>`
 
 
   }
@@ -1189,46 +1193,29 @@ async function CopyQRimage() {
 
 
 // |||||||||||||||||||||||||||||||||||>>> Modifying chrome media player notification for android notifications <<<||||||||||||||||||||||||||
-// if ('mediaSession' in navigator) {
+if ('mediaSession' in navigator) {
+  console.log("The real title of songs is : ",shareTitle.getAttribute('content'))
+  navigator.mediaSession.metadata = new MediaMetadata({
+  title: shareTitle.getAttribute('content'),
+  artist: 'YouTube Mp3',
+  // album: 'Whenever You Need Somebody',
+  artwork: [
+      { src: ShareImage.getAttribute('content'),  sizes: '96x96',   type: 'image/png' },
+      { src: ShareImage.getAttribute('content'), sizes: '128x128', type: 'image/png' },
+      { src: ShareImage.getAttribute('content'), sizes: '192x192', type: 'image/png' },
+      { src: ShareImage.getAttribute('content'), sizes: '256x256', type: 'image/png' },
+      { src: ShareImage.getAttribute('content'), sizes: '384x384', type: 'image/png' },
+      { src: ShareImage.getAttribute('content'), sizes: '512x512', type: 'image/png' },
+  ]
+  });
 
-//   navigator.mediaSession.metadata = new MediaMetadata({
-//   title: 'Never Gonna Give You Up',
-//   artist: 'Rick Astley',
-//   album: 'Whenever You Need Somebody',
-//   artwork: [
-//       { src: 'https://dummyimage.com/96x96',   sizes: '96x96',   type: 'image/png' },
-//       { src: 'https://dummyimage.com/128x128', sizes: '128x128', type: 'image/png' },
-//       { src: 'https://dummyimage.com/192x192', sizes: '192x192', type: 'image/png' },
-//       { src: 'https://dummyimage.com/256x256', sizes: '256x256', type: 'image/png' },
-//       { src: 'https://dummyimage.com/384x384', sizes: '384x384', type: 'image/png' },
-//       { src: 'https://dummyimage.com/512x512', sizes: '512x512', type: 'image/png' },
-//   ]
-//   });
-
-//   navigator.mediaSession.setActionHandler('play', function() {});
-//   navigator.mediaSession.setActionHandler('pause', function() {});
-//   navigator.mediaSession.setActionHandler('seekbackward', function() {});
-//   navigator.mediaSession.setActionHandler('seekforward', function() {});
-//   navigator.mediaSession.setActionHandler('previoustrack', function() {});
-//   navigator.mediaSession.setActionHandler('nexttrack', function() {});
-// }
-
-// if ('mediaSession' in navigator) {
-
-//   navigator.mediaSession.metadata = new MediaMetadata({
-//   title: 'Never Gonna Give You Up',
-//   artist: 'Rick Astley',
-//   album: 'Whenever You Need Somebody',
-//   artwork: [
-//       { src: 'https://dummyimage.com/96x96',   sizes: '96x96',   type: 'image/png' },
-//       { src: 'https://dummyimage.com/128x128', sizes: '128x128', type: 'image/png' },
-//       { src: 'https://dummyimage.com/192x192', sizes: '192x192', type: 'image/png' },
-//       { src: 'https://dummyimage.com/256x256', sizes: '256x256', type: 'image/png' },
-//       { src: 'https://dummyimage.com/384x384', sizes: '384x384', type: 'image/png' },
-//       { src: 'https://dummyimage.com/512x512', sizes: '512x512', type: 'image/png' },
-//   ]
-//   });
-// }
+  navigator.mediaSession.setActionHandler('play', function() {AudioConnector.play()});
+  navigator.mediaSession.setActionHandler('pause', function() {AudioConnector.pause()});
+  navigator.mediaSession.setActionHandler('seekbackward', function() {SkiptPre()});
+  navigator.mediaSession.setActionHandler('seekforward', function() {SkipeNext()});
+  navigator.mediaSession.setActionHandler('previoustrack', function() {Presong()});
+  navigator.mediaSession.setActionHandler('nexttrack', function() {Nextsong()});
+}
 
 // shortHistory
 // shortfaveroite
