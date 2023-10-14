@@ -156,12 +156,12 @@
             <div class="backCard d-flex flex-column justify-content-end align-items-center position-relative w-100 card mx-5 overflow-hidden fornt_Image" style="height:85%;">
                 
                 <div class="position-absolute end-0 top-0 d-flex flex-column overflow-auto align-items-end sideMenuShortcuts" style="width:150px;z-index:1;height:80%">
-                  <div class="my-3"><button id="shortHistory" data-bs-target="#modalforHistoryPlaylist" data-bs-toggle="modal" class="btn"><i class="bi bi-list"></i> <span> Related</span></button> </div>
-                  <div class="my-3"><button id="shortfaveroite"  data-bs-target="#modalformFaveroiteVideos" data-bs-toggle="modal" class="btn"><i class="bi bi-film"></i> <span> videos</span></button></div>
-                  <div class="my-3 {% if not VideoId %} d-none {% endif %}"><button id="issavedtolocal" class="btn"><i class="bi bi-heart"></i> <span> Save</span></button></div>
-                  <div class="my-3 {% if not VideoId %} {% endif %}" id="desktopShareButton"><button id="shortShare" data-bs-target="#modalformDesktopshare" data-bs-toggle="modal" class="btn"><i class="bi bi-share-fill"></i> <span> Share</span></button></div>
+                  <div class="my-auto"><button id="shortHistory" data-bs-target="#modalforHistoryPlaylist" data-bs-toggle="modal" class="btn"><i class="bi bi-list"></i> <span> Related</span></button> </div>
+                  <div class="my-auto"><button id="shortfaveroite"  data-bs-target="#modalformFaveroiteVideos" data-bs-toggle="modal" class="btn"><i class="bi bi-film"></i> <span> videos</span></button></div>
+                  <div class="my-auto {% if not VideoId %} d-none {% endif %}"><button id="issavedtolocal" class="btn"><i class="bi bi-heart"></i> <span> Save</span></button></div>
+                  <div class="my-auto {% if not VideoId %} {% endif %}" id="desktopShareButton"><button id="shortShare" data-bs-target="#modalformDesktopshare" data-bs-toggle="modal" class="btn"><i class="bi bi-share-fill"></i> <span> Share</span></button></div>
                   <!-- <div class="my-3 {% if not VideoId %} {% endif %}" id="phoneshareButton"><button id="shortShare" onclick="SharePage()" class="btn"><i class="bi bi-share-fill"></i> <span> Share</span></button></div> -->
-                  <div class="my-3 {% if not VideoId %} {% endif %}" ><a id="downloadNowbtn" class="btn " ><i class="bi bi-box-arrow-down"></i><span> Download</span> </a></div>
+                  <div class="my-auto {% if not VideoId %} {% endif %}" ><a id="downloadNowbtn" class="btn " ><i class="bi bi-box-arrow-down"></i><span> Download</span> </a></div>
 
                 </div>
 
