@@ -49,6 +49,7 @@ let deleteAllFaveroite = document.getElementById('deleteAllFaveroite')
 let cancleFaveroiteSelection = document.getElementById('cancleFaveroiteSelection')
 let PlayFaveroiteQueue = document.getElementById('PlayFaveroiteQueue')
 let playlisViewsavedvideo = document.getElementById('playlisViewsavedvideo')
+let searchinplaylist = document.getElementById('searchinplaylist')
 
 
 PlayButton.style.border = 'none !important'
@@ -265,7 +266,7 @@ let InsertPLaylistVideosFromList = (urls) => {
     CurrentPlayingSongsList[index] = `https://www.youtube.com/watch?v=${GetVideoId(element['url'])}`
 
     strVideotheme +=
-      `<div class='d-flex justify-content-center m-auto playlistBox' ><span class='text-white'>${index + 1}.</span>
+      `<div class='d-flex justify-content-center m-auto playlistBox' data-videotitle="${element['title']}" ><span class='text-white'>${index + 1}.</span>
           <a href="/watch?v=${GetVideoId(element['url'])}&list=${playlistId}&index=${index}" 
           class="card m-auto my-1 text-truncate" 
           style="width:18rem;text-decoration:none;background-image:url('https://img.youtube.com/vi/${GetVideoId(element['url'])}/maxresdefault.jpg');
@@ -974,6 +975,32 @@ cancleFaveroiteSelection.addEventListener("click", (event) => {
   cancleFaveroiteSelection.classList.add('d-none')
 })
 
+// """"""""""""""""""""""""""""""""""""""""""""""""""""" Searching in playing playlist """""""""""""""""""""""""""""""""""""""""""""""""""""""""
+searchinplaylist.addEventListener('input',(event)=>{
+  let searchvideoresults = document.getElementById("searchvideoresults")
+  let contents = insertPlayingPlaylistVideo.children
+  let query = event.target.value
+  let results = 0
+
+  for (let index = 0; index < contents.length; index++) {
+    const element = contents[index];
+    console.log(element.dataset.videotitle)
+    if(String(element.dataset.videotitle).toLocaleLowerCase().includes(query.toLocaleLowerCase())){
+      element.classList.remove('d-none')
+      results+=1
+    }
+    else{
+      element.classList.add('d-none')
+    }
+  }
+  if(String(query).length>0){
+    searchvideoresults.innerHTML = results
+  }
+  else{
+    searchvideoresults.innerHTML = ''
+
+  }
+})
 
 window.onload = async () => {
   await checckIsSaved()
@@ -1156,6 +1183,8 @@ let LoadSearchedVideo = (VideosData) => {
 
 
 }
+
+
 
 
 let shareUrl = window.location.href
