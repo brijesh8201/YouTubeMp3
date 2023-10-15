@@ -202,11 +202,11 @@
                         <!-- <div class="col-auto m-auto w-0 p-0 m-0 order-first"><button class="btn p-0 border-0" data-bs-target="#modalforCurrentPlaylist" data-bs-toggle="modal"><i class="bi bi-music-note-list fs-2 text-primary"></i></button></div> -->
                         
                       <div class="col p-0 m-0 order-first">{% if isPlaylist %}<div class="spinner-grow text-primary" role="status"><span class="sr-only"></span></div><button id="LoadList" class="btn d-none disabledBtns" {% if not isPlaylist %}disabled style="border:none !important" {% endif %} data-bs-target="#modalforCurrentPlaylist"data-bs-toggle="modal"><i class="bi bi-music-note-list fs-2 text-primary"></i>{% else %}<button id="LoadList" class="btn disabledBtns" {% if not isPlaylist %}disabled style="border:none !important" {% endif %} data-bs-target="#exampleModalToggle" data-bs-toggle="modal"><i class="bi bi-music-note-list fs-2 text-primary"></i>{% endif %}</div>
-                      <div class="col p-0 m-0 "><button id="preSkipBtn" disabled class="btn"><i class="bi bi-skip-backward-circle fs-2 text-primary"></i></i> </div> 
-                      <div class="col p-0 m-0 "><button id="PreBtn"  class="btn disabledBtns" {% if not isPlaylist %}disabled style="border:none !important;transform: rotate(180deg);" {% else %}style="transform: rotate(180deg);" {% endif %}><i class="bi bi-fast-forward-circle fs-2 text-primary"></i></i></button></div>
+                        <div class="col p-0 m-0 "><button id="PreBtn"  class="btn disabledBtns" {% if not isPlaylist %}disabled style="border:none !important;transform: rotate(180deg);" {% else %}style="transform: rotate(180deg);" {% endif %}><i class="bi bi-fast-forward-circle fs-2 text-primary"></i></i></button></div>
+                        <div class="col p-0 m-0 "><button id="preSkipBtn" disabled class="btn"><i class="bi bi-skip-backward-circle fs-2 text-primary"></i></i> </div> 
                       <div class="col p-0 m-0 "><button id="PlayButton" class="btn" {% if not VideoId %}disabled style="border:none !important" {% endif %}><i class="bi bi-play-circle fs-2 text-primary"></i></button></div>
-                      <div class="col p-0 m-0 "><button id="NextBtn" class="btn disabledBtns" {% if not isPlaylist %}disabled style="border:none !important" {% endif %}><i class="bi bi-fast-forward-circle fs-2 text-primary"></i></button></div>
                       <div class="col p-0 m-0 "><button id="nextSkipBtn" disabled class="btn" style="transform: rotate(180deg);"><i class="bi bi-skip-backward-circle fs-2 text-primary"></i></button></div>
+                      <div class="col p-0 m-0 "><button id="NextBtn" class="btn disabledBtns" {% if not isPlaylist %}disabled style="border:none !important" {% endif %}><i class="bi bi-fast-forward-circle fs-2 text-primary"></i></button></div>
                       <div class="col p-0 m-0 order-last d-flex justify-content-center align-items-center" style="position: relative;"><button class="btn" id="volumecontrolbtn" ><i class="bi bi-soundwave fs-2 text-primary" style="font-weight: bolder;"></i></button><!-- <sup id="volumecontrolstatus" class="text-primary"> 50%</sup> --></div>
   
                         
@@ -302,8 +302,12 @@
                 <p class="card-text text-white py-0 m-0" id="PlaylistlastUpdated"></p>
                 <div class="row align-items-center">
                   <div class="col p-0 px-1">
-                  <input type="search" name="searchinplaylist" id="searchinplaylist" class="form-control mt-2 text-white" style="height:30px;background-color:#ffffff3d !important">
-
+                  <input type="search" name="searchinplaylist" placeholder="search for songs" id="searchinplaylist" class="form-control mt-2 text-white" style="height:30px;background-color:#ffffff3d !important">
+                    <style>
+                      input#searchinplaylist::placeholder {
+                        color: white !important;
+                    }
+                    </style>
                   </div>
                   <div class="col-auto p-0 m-0">
                     <span class="text-warning" id="searchvideoresults"></span>
@@ -414,8 +418,8 @@
 <div class="modal fade backCardImage" id="modalformDesktopshare" aria-hidden="true"aria-labelledby="exampleModalToggleLabel" tabindex="-1">
   
   <div class="modal-dialog modal-dialog-centered ">
-    <div class="modal-content border" id="modalBackImgsaved" style="background-image:url('{% static 'files/back.jpg' %}')">
-      <div class="modal-header backCardImage d-flex justify-content align-items-center">
+    <div class="modal-content border " id="modalBackImgsaved" style="background-image:url('{% static 'files/back.jpg' %}');background-size:cover;">
+      <div class="modal-header d-flex justify-content align-items-center" style="backdrop-filter: blur(20px);">
         <!-- <button type="button" class="btn-close position-absolute top-0 m-2 end-0 bg-secondary" data-bs-dismiss="modal" aria-label="Close"></button> -->
         
         <img src="{% static 'files/icon1.png' %}" width="55px" height="60px" alt="">
@@ -424,7 +428,7 @@
          
         
       </div>
-      <div class="modal-body p-0 m-0">
+      <div class="modal-body p-0 m-0" style="backdrop-filter: blur(20px);">
         <style>
           .media-icons1:hover{
             color: #c91515 !important;

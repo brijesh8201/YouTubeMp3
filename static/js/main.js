@@ -1185,21 +1185,20 @@ let LoadSearchedVideo = (VideosData) => {
 }
 
 
-
-
-let shareUrl = window.location.href
-
-let whatslinkurl = 'whatsapp://send?text=' + shareUrl
-let twitterrul = 'https://twitter.com/share?url=' + shareUrl
-let facebookurl = 'https://www.facebook.com/sharer/sharer.php?u=' + shareUrl
-let instagramurl = "https://www.instagram.com/?url=" + shareUrl
-let mailurl = "mailto:?subject=<SUBJECT>&body=<BODY>"
-
 "https://twitter.com/share?url=<URL>&text="
 "https://www.facebook.com/sharer/sharer.php?u="
 
 
 function ShareNowLink(target) {
+  
+let shareUrl = window.location.href
+
+let whatslinkurl = 'whatsapp://send?text='+PlayingSongTitle + shareUrl
+let twitterrul = 'https://twitter.com/share?url=' + shareUrl
+let facebookurl = 'https://www.facebook.com/sharer/sharer.php?u='+PlayingSongTitle + shareUrl
+let instagramurl = "https://www.instagram.com/?url=" +PlayingSongTitle+ shareUrl
+let mailurl = `mailto:?subject=${PlayingSongTitle}&body=${shareUrl}`
+
 
   if (target.id == 'mailShare') {
     shareUrl = mailurl
@@ -1273,8 +1272,11 @@ let ShowNavigationPlayer = (event) => {
     navigator.mediaSession.setActionHandler('pause', function () { AudioConnector.pause() });
     navigator.mediaSession.setActionHandler('seekbackward', function () { SkiptPre() });
     navigator.mediaSession.setActionHandler('seekforward', function () { SkipeNext() });
-    navigator.mediaSession.setActionHandler('previoustrack', function () { Presong() });
-    navigator.mediaSession.setActionHandler('nexttrack', function () { Nextsong() });
+    if(GetUrlParams('list')!=null || GetUrlParams('list')!=undefined){
+
+      navigator.mediaSession.setActionHandler('previoustrack', function () { Presong() });
+      navigator.mediaSession.setActionHandler('nexttrack', function () { Nextsong() });
+    }
   }
 }
 
