@@ -1271,11 +1271,11 @@ function ShareNowLink(target) {
 
   let shareUrl = window.location.href
 
-  let whatslinkurl = 'whatsapp://send?text=' + PlayingSongTitle + shareUrl
+  let whatslinkurl = 'whatsapp://send?text=' + PlayingSongTitle+" " + shareUrl
   let twitterrul = 'https://twitter.com/share?url=' + shareUrl
-  let facebookurl = 'https://www.facebook.com/sharer/sharer.php?u=' + PlayingSongTitle + shareUrl
-  let instagramurl = "https://www.instagram.com/?url=" + PlayingSongTitle + shareUrl
-  let mailurl = `mailto:?subject=${PlayingSongTitle}&body=${shareUrl}`
+  let facebookurl = 'https://www.facebook.com/sharer/sharer.php?u=' + PlayingSongTitle +" "+ shareUrl
+  let instagramurl = "https://www.instagram.com/?url=" + PlayingSongTitle+" " + shareUrl
+  let mailurl = `mailto:?subject=${PlayingSongTitle}&body='${shareUrl}'`
 
 
   if (target.id == 'mailShare') {

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 
 # Create your views here.
 from django.shortcuts import render,HttpResponse
@@ -9,7 +9,7 @@ import yt_dlp,requests
 import json
 # from pytube import YouTube, Playlist
 # Create your views here.
-
+from django.conf import settings
 
 def HomePage(request):
     
@@ -245,3 +245,25 @@ def GetRelatedVideos(request):
         
 
     return HttpResponse(json.dumps({})) 
+
+
+def CreateQrCode(request):
+    if request.method=="GET":
+        # Import QRCode from pyqrcode 
+        import segno,os
+
+        data_url = request.GET.get("data_url").replace('__',"&")
+        print("the data url is : ",data_url)
+        filepath = os.path.join(settings.BASE_DIR,'static','files','qrcode.png')
+        
+        
+        qr = segno.make_qr(data_url)
+        qr.save(filepath,
+                scale=8,
+                border=1,
+                
+        )
+        
+        return redirect('/static/files/qrcode.png')
+
+    return HttpResponse(json.dumps({}))
