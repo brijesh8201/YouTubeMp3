@@ -39,7 +39,10 @@
         max-width: 250px !important;
       }
       .bg-info{
-        background: linear-gradient(45deg,blue,yellow,green) !important;
+        background:linear-gradient(331deg,#00ff66,#00cdff47,#00ff00ab) !important;
+      }
+      .bg-info2{
+        background:linear-gradient(331deg,#ff00f2,#00ff00ab) !important;
       }
       @media only screen and (max-width: 680px) {
         .fornt_Image {
@@ -135,7 +138,7 @@
   
   {% csrf_token %}
 
-    <button onclick="window.location.href='#explore'" title="Search New song or Playlist"  class="btn btn-sm position-absolute end-0 top-0 m-5 waitingForConnection" style="z-index:1;"><i class="bi bi-tv text-primary fs-4"></i></button>
+    <button onclick="GotoSearch()" title="Search New song or Playlist"  class="btn btn-sm position-absolute end-0 top-0 m-5 waitingForConnection" style="z-index:1;"><i class="bi bi-tv text-primary fs-4"></i></button>
    
     <div id="backImag" style="background-image: {% if VideoId %} url('https://img.youtube.com/vi/{{VideoId}}/maxresdefault.jpg'); {% else %} url('{% static 'files/back.jpg'%}'); {% endif %} background-size:cover;background-position:center center;">
         <div class="d-flex justify-content-center align-items-end backCardImage" style="height:100vh;">
@@ -228,8 +231,8 @@
        
           <nav class="navbar bg-transparent d-inline-block navsearch">
               <a class="navbar-brand d-flex justify-content-center align-items-center" href="#">
-                <img src="{% static 'files/icon1.png' %}" alt="Logo" width="70px" height="70px" class="d-inline-block align-text-top">
-                <span class="fs-4">YT-Mp3</span>
+                <img src="{% static 'files/icon1.png' %}" alt="Logo" width="48px" height="50px" class="d-inline-block align-text-top">
+                <span class="fs-4 text-white">YT-Mp3</span>
               </a>
           </nav>
           
@@ -269,15 +272,13 @@
         <span class="placeholder" style="width: 25%;"></span> -->
 
         {% for item in cards %}
-          <div class="card m-1 pb-1" aria-hidden="true" style="min-width:250px;">
+          <div class="card m-1 pb-1 bg-info2" aria-hidden="true" style="min-width:250px;">
             <!-- <img src="..." class="card-img-top" alt="..."> -->
-            <div class="card placeholder disabled" style="height:120px;"></div>
-            <div class="card-body p-0 m-0">
+            <div class="card placeholder disabled bg-info2" style="height:120px;"></div>
+            <div class="card-body bg-info2 p-0 m-0">
               <h5 class="card-title placeholder-glow w-100 my-0 py-0">
                 <span class="placeholder col-6 w-100"></span>
               </h5>
-              <a class="btn btn-sm btn-primary disabled placeholder col-5 mx-1 my-0 py-0" aria-disabled="true"></a>
-              <a class="btn btn-sm btn-primary disabled placeholder col-5 mx-1 my-0 py-0" aria-disabled="true"></a>
             </div>
           </div>
         {% endfor %}

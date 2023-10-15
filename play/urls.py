@@ -1,5 +1,5 @@
 from django.urls import path
-from play.views import HomePage,ExtractPlaylistVideos,GetNewSong,LogIn,Signup,SearchNewItem
+from play.views import HomePage,ExtractPlaylistVideos,GetNewSong,LogIn,Signup,SearchNewItem,GetRelatedVideos
 urlpatterns = [
     path('',HomePage,name='Homeplay'),
     path('watch/',HomePage,name='Homeplay'),
@@ -9,4 +9,5 @@ urlpatterns = [
     path('signup/',Signup,name='login'),
     path('createqr/',Signup,name='login'),
     path('search/',SearchNewItem,name='search'),
+    path('relatedvideos/',GetRelatedVideos,name='search'),
 ]

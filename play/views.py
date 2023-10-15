@@ -222,3 +222,26 @@ def SearchNewItem(request):
         return HttpResponse(json.dumps(NewdataItem))
 
     return HttpResponse(json.dumps({}))
+
+
+def GetRelatedVideos(request):
+    if request.method=="POST":
+        videoid = request.POST.get('id')
+        url = "https://youtube-search-and-download.p.rapidapi.com/video/related"
+
+        querystring = {"id":videoid}
+
+        headers = {
+            "X-RapidAPI-Key": "8cacaff4e4msh4fee6493b9185f4p1fec8cjsna481c4a0f8b0",
+            "X-RapidAPI-Host": "youtube-search-and-download.p.rapidapi.com"
+        }
+
+        response = requests.get(url, headers=headers, params=querystring)
+
+        related_data = response.json()
+        print("Related data is : ",related_data)
+        return HttpResponse(json.dumps(related_data)) 
+            
+        
+
+    return HttpResponse(json.dumps({})) 

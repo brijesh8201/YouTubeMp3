@@ -55,6 +55,7 @@ let searchinplaylist = document.getElementById('searchinplaylist')
 PlayButton.style.border = 'none !important'
 let RangeInterval = 0
 let CurrentPlayingSongsList = {}
+let RelatedVideosList = []
 let PlayingSongTitle = ''
 let CurrentPlayingSongsListIndex = -1
 
@@ -545,7 +546,7 @@ issavedtolocal.addEventListener('click', () => {
   let saveToVideoId = GetUrlParams('v')
   let title = shareTitle.getAttribute('content')
 
-  if(playlistData['Urls']==undefined || playlistData['Urls']==null){
+  if (playlistData['Urls'] == undefined || playlistData['Urls'] == null) {
     playlistData['Urls'] = {}
   }
 
@@ -572,7 +573,7 @@ function checckIsSaved() {
 
   let saveToVideoId = GetUrlParams('v')
   let playlistData = JSON.parse(localStorage.getItem('saved'))
-  if(playlistData['Urls']==undefined || playlistData['Urls']==null){
+  if (playlistData['Urls'] == undefined || playlistData['Urls'] == null) {
     playlistData['Urls'] = {}
   }
   savedKeys = Object.keys(playlistData['Urls'])
@@ -587,10 +588,10 @@ let insetFaveroiteVideoInBox = () => {
   let savedVideodata = GetSaved()
 
   let strVideotheme = ``
-  if(savedVideodata['Urls']==undefined || savedVideodata['Urls']==null){
+  if (savedVideodata['Urls'] == undefined || savedVideodata['Urls'] == null) {
     savedVideodata['Urls'] = {}
   }
-  playlisLenghtsavedvideo.innerHTML = 'Length : ' + Object.keys(savedVideodata['Urls']).length+" videos"
+  playlisLenghtsavedvideo.innerHTML = 'Length : ' + Object.keys(savedVideodata['Urls']).length + " videos"
   playlisViewsavedvideo.innerHTML = 'Last Update : ' + savedVideodata['lastUdpate']
 
   for (let index = 0; index < Object.keys(savedVideodata['Urls']).length; index++) {
@@ -976,7 +977,7 @@ cancleFaveroiteSelection.addEventListener("click", (event) => {
 })
 
 // """"""""""""""""""""""""""""""""""""""""""""""""""""" Searching in playing playlist """""""""""""""""""""""""""""""""""""""""""""""""""""""""
-searchinplaylist.addEventListener('input',(event)=>{
+searchinplaylist.addEventListener('input', (event) => {
   let searchvideoresults = document.getElementById("searchvideoresults")
   let contents = insertPlayingPlaylistVideo.children
   let query = event.target.value
@@ -985,18 +986,18 @@ searchinplaylist.addEventListener('input',(event)=>{
   for (let index = 0; index < contents.length; index++) {
     const element = contents[index];
     console.log(element.dataset.videotitle)
-    if(String(element.dataset.videotitle).toLocaleLowerCase().includes(query.toLocaleLowerCase())){
+    if (String(element.dataset.videotitle).toLocaleLowerCase().includes(query.toLocaleLowerCase())) {
       element.classList.remove('d-none')
-      results+=1
+      results += 1
     }
-    else{
+    else {
       element.classList.add('d-none')
     }
   }
-  if(String(query).length>0){
+  if (String(query).length > 0) {
     searchvideoresults.innerHTML = results
   }
-  else{
+  else {
     searchvideoresults.innerHTML = ''
 
   }
@@ -1046,6 +1047,7 @@ document.onkeyup = function (e) {
     LoadList.click()
   }
 };
+
 
 
 let CopyShareUrl = (target, info) => {
@@ -1149,6 +1151,82 @@ $('#searchNewitem').submit((event) => {
 
 });
 
+function GotoSearch(){
+  window.location.href = "#explore"
+  if(RelatedVideosList.length<1){
+    getRelatedVideos()
+  }
+}
+
+let getRelatedVideos = () => {
+  // relatedvideos
+  console.log("start loading related >>..")
+  if (GetUrlParams('v') != undefined || GetUrlParams('v') != null) {
+
+    var url = '/relatedvideos/';
+    let TokenCsrf = document.querySelector('input[name="csrfmiddlewaretoken"]')
+    let dataurls = { 'id': GetUrlParams('v'), 'csrfmiddlewaretoken': TokenCsrf.value }
+
+    $.ajax({
+      type: "POST",
+      url: url,
+      data: dataurls,
+
+      success: function (data) {
+        let relatedVideos = JSON.parse(data)
+        RelatedVideosList = relatedVideos['contents']
+        LoadRelatedVideo(relatedVideos['contents'])
+
+
+      },
+      error: function (data) {
+
+        console.log("error")
+      }
+    });
+
+  }
+
+}
+
+let LoadRelatedVideo = (VideosData) => {
+  let SearchContentbox = document.getElementById("SearchContentbox");
+  // viewCount videoId title thumbnail lengthText channelTitle
+  let videoStr = ``
+  for (index = 0; index <= VideosData.length; index++) {
+    let element = VideosData[index]
+    try {
+      if(element!=undefined){
+
+        element = element['video']
+        console.log(element['thumbnails'][element['thumbnails'].length-1]['url'])
+        // ${element['thumbnail'][(element['thumbnail'].length) - 1]['url']}
+        videoStr += `<a href="/watch/?v=${element['videoId']}" title="${element['title']}" class="card m-1 pb-1 overflow-hidden videoWidth text-decoration-none" aria-hidden="true" ">
+          
+                      <div class="card position-relative">
+                      <img src="${element['thumbnails'][element['thumbnails'].length-1]['url']}" class="card-img-top position-relative" alt="...">
+                      <span class="col-6 w-100 position-absolute top-0 left-0 mx-auto text-primary" style="color: #00fff2 !important;font-weight: 900;">${element['lengthText']}</span>
+                      </div>
+
+                      <span class="text-truncate " style="font-size:14px" title=${element['title']}">${element['title']}</span>
+                    <div class="card-body p-0 m-0 d-flex justify-content-start text-start">
+                        <span class="w-100 mx-1" style="font-size:12px !important;">${abbreviateNumber(Number.parseInt(element['viewCount']))} views</span>
+                        <span class="w-100 mx-1" style="font-size:12px !important;text-truncate">(${element['channelTitle']})</span>
+                        
+                      </div>
+                    </a>`
+      }
+      SearchContentbox.innerHTML = SearchContentbox.innerHTML+=videoStr
+    }
+    catch (error) {
+      console.log(error)
+    }
+
+  }
+
+  SearchContentbox.innerHTML = videoStr
+}
+
 let LoadSearchedVideo = (VideosData) => {
   let SearchContentbox = document.getElementById("SearchContentbox");
   // viewCount videoId title thumbnail lengthText channelTitle
@@ -1190,14 +1268,14 @@ let LoadSearchedVideo = (VideosData) => {
 
 
 function ShareNowLink(target) {
-  
-let shareUrl = window.location.href
 
-let whatslinkurl = 'whatsapp://send?text='+PlayingSongTitle + shareUrl
-let twitterrul = 'https://twitter.com/share?url=' + shareUrl
-let facebookurl = 'https://www.facebook.com/sharer/sharer.php?u='+PlayingSongTitle + shareUrl
-let instagramurl = "https://www.instagram.com/?url=" +PlayingSongTitle+ shareUrl
-let mailurl = `mailto:?subject=${PlayingSongTitle}&body=${shareUrl}`
+  let shareUrl = window.location.href
+
+  let whatslinkurl = 'whatsapp://send?text=' + PlayingSongTitle + shareUrl
+  let twitterrul = 'https://twitter.com/share?url=' + shareUrl
+  let facebookurl = 'https://www.facebook.com/sharer/sharer.php?u=' + PlayingSongTitle + shareUrl
+  let instagramurl = "https://www.instagram.com/?url=" + PlayingSongTitle + shareUrl
+  let mailurl = `mailto:?subject=${PlayingSongTitle}&body=${shareUrl}`
 
 
   if (target.id == 'mailShare') {
@@ -1247,8 +1325,6 @@ async function CopyQRimage() {
 
 }
 
-
-
 // |||||||||||||||||||||||||||||||||||>>> Modifying chrome media player notification for android notifications <<<||||||||||||||||||||||||||
 
 let ShowNavigationPlayer = (event) => {
@@ -1272,7 +1348,7 @@ let ShowNavigationPlayer = (event) => {
     navigator.mediaSession.setActionHandler('pause', function () { AudioConnector.pause() });
     navigator.mediaSession.setActionHandler('seekbackward', function () { SkiptPre() });
     navigator.mediaSession.setActionHandler('seekforward', function () { SkipeNext() });
-    if(GetUrlParams('list')!=null || GetUrlParams('list')!=undefined){
+    if (GetUrlParams('list') != null || GetUrlParams('list') != undefined) {
 
       navigator.mediaSession.setActionHandler('previoustrack', function () { Presong() });
       navigator.mediaSession.setActionHandler('nexttrack', function () { Nextsong() });
