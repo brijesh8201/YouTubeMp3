@@ -476,7 +476,7 @@ let GetPlaylit = (name = null) => {
   if (playlist != undefined) {
     return playlist[name]
   }
-  return {}
+  return playlist
 
 
 }
@@ -1346,8 +1346,8 @@ let ShowNavigationPlayer = (event) => {
 
     navigator.mediaSession.setActionHandler('play', function () { AudioConnector.play() });
     navigator.mediaSession.setActionHandler('pause', function () { AudioConnector.pause() });
-    navigator.mediaSession.setActionHandler('seekbackward', function () { SkiptPre() });
-    navigator.mediaSession.setActionHandler('seekforward', function () { SkipeNext() });
+    navigator.mediaSession.setActionHandler('seekbackward', function () { SkipeNext() });
+    navigator.mediaSession.setActionHandler('seekforward', function () { SkiptPre() });
     if (GetUrlParams('list') != null || GetUrlParams('list') != undefined) {
 
       navigator.mediaSession.setActionHandler('previoustrack', function () { Presong() });
