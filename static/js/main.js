@@ -1,5 +1,4 @@
 let PlayButton = document.getElementById('PlayButton')
-let AudioConnector = new Audio()
 let totalTime = document.getElementById('totalTime')
 let currentTime = document.getElementById('currentTime')
 let ProcessMeter = document.getElementById('ProcessMeter')
@@ -62,9 +61,14 @@ let CurrentPlayingSongsListIndex = -1
 let volumecontrolbtn = document.getElementById('volumecontrolbtn')
 let volumecontrols = document.getElementById('volumecontrol')
 
-// AudioConnector.volume = 0.5
-// volumecontrol.style.backgroundSize = `50% 100%`
-// volumecontrols.style.backgroundSize = '50% 100%'
+
+NextBtn.addEventListener('click', Nextsong)
+PreBtn.addEventListener('click', Presong)
+preSkipBtn.addEventListener('click', SkipeNext)
+nextSkipBtn.addEventListener('click', SkiptPre)
+
+let AudioConnector = new Audio()
+
 
 volumecontrolbtn.addEventListener('click', (event) => {
 
@@ -85,10 +89,6 @@ volumecontrol.addEventListener('focusout', () => {
 })
 
 
-NextBtn.addEventListener('click', Nextsong)
-PreBtn.addEventListener('click', Presong)
-preSkipBtn.addEventListener('click', SkipeNext)
-nextSkipBtn.addEventListener('click', SkiptPre)
 
 AudioConnector.onplay = (event) => {
   PlayButton.innerHTML = '<i class="bi bi-pause-circle fs-2 text-primary"></i>'
@@ -157,9 +157,9 @@ let GetRange = () => {
 
 ProcessMeter.addEventListener('input', (event) => {
   AudioConnector.currentTime = (AudioConnector.duration * ProcessMeter.value) / 100
+  currentTime.innerHTML = convertIntoMinuts(AudioConnector.currentTime)
 
 })
-
 
 
 volumecontrol.addEventListener('input', (event) => {
@@ -218,7 +218,6 @@ let GetUrlParams = (param) => {
 }
 
 
-
 let LoadPlaylistDataInPLaylistBox = (playlistUrls) => {
 
   playlisView.innerHTML = `Views: ${playlistUrls['Views']}`
@@ -240,7 +239,6 @@ let LoadPlaylistDataInPLaylistBox = (playlistUrls) => {
   LoadList.previousElementSibling.classList.add('d-none')
   CreateLocalEntry(GetUrlParams('list'), playlistUrls)
 }
-
 
 
 let GetVideoId = (url) => {
@@ -473,10 +471,18 @@ let GetPlaylit = (name = null) => {
 
   playlist = JSON.parse(localStorage.getItem('playlist'))
 
-  if (playlist != undefined) {
-    return playlist[name]
+  if (playlist != null ) {
+
+    if (name != null) {
+      if(playlist[name]!=null){
+        return playlist[name]
+      }
+      return {}
+
+    }
+    return playlist
   }
-  return playlist
+  return {}
 
 
 }
@@ -713,11 +719,11 @@ SearchForurl.addEventListener('click', (event) => {
 function ShowSavedPlaylist() {
 
   let savedplaylistStr = ``
-  savedplaylist = JSON.parse(localStorage.getItem('playlist'))
+  savedplaylist = GetPlaylit()
   let TotalVideos = 0
 
 
-  if (savedplaylist != undefined) {
+  
 
     for (let index = 0; index < Object.keys(savedplaylist).length; index++) {
 
@@ -729,7 +735,6 @@ function ShowSavedPlaylist() {
 
       if (videoId != undefined) {
         countvideos = Object.keys(element['Urls']).length
-        playlisLenghtsaved.innerHTML = `Lenght : ${savedKeys.length} playlists`
         videoId = GetVideoId(videoId)
         TotalVideos = TotalVideos + countvideos
 
@@ -744,14 +749,19 @@ function ShowSavedPlaylist() {
 
     }
     playlisViewsaved.innerHTML = `Count : ${TotalVideos} videos`
+    playlisLenghtsaved.innerHTML = `Lenght : ${Object.keys(savedplaylist).length} playlists`
+
     insertSavedPlaylistInBox.innerHTML = savedplaylistStr;
+
     deleteAllPlaylist.removeAttribute('disabled')
     shortHistory.parentElement.classList.remove('d-none')
 
-  }
+  
 
   if (Object.keys(savedplaylist).length < 1) {
+    insertSavedPlaylistInBox.innerHTML =''
     shortHistory.parentElement.classList.add('d-none')
+
   }
 
 
@@ -770,9 +780,9 @@ let LoadFirstSong = () => {
 let LoadLocalPlaylist = async () => {
 
   if (GetUrlParams('list') != null) {
+    let currentPlaylist = GetPlaylit(GetUrlParams('list'))
 
-
-    if (GetPlaylit(GetUrlParams('list')) == undefined) {
+    if (Object.keys(currentPlaylist).length<1) {
 
       var url = '/playlist/';
       let TokenCsrf = document.querySelector('input[name="csrfmiddlewaretoken"]')
@@ -787,6 +797,7 @@ let LoadLocalPlaylist = async () => {
           data: dataurls,
           success: function (data) {
             let playlistUrls = JSON.parse(data)
+            console.log("this is the data from server : ",playlistUrls)
             LoadPlaylistDataInPLaylistBox(playlistUrls)
           },
           error: function (data) {
@@ -872,6 +883,7 @@ let DeleteSelectedPlaylists = () => {
 
 deleteOnePlatlist.addEventListener('click', (event) => {
   let selecteplaylist = document.querySelectorAll('.selectedPlaylist')
+  
   for (let index = 0; index < selecteplaylist.length; index++) {
     const element = selecteplaylist[index];
     if (element.checked) {
@@ -985,7 +997,6 @@ searchinplaylist.addEventListener('input', (event) => {
 
   for (let index = 0; index < contents.length; index++) {
     const element = contents[index];
-    console.log(element.dataset.videotitle)
     if (String(element.dataset.videotitle).toLocaleLowerCase().includes(query.toLocaleLowerCase())) {
       element.classList.remove('d-none')
       results += 1
@@ -1151,16 +1162,15 @@ $('#searchNewitem').submit((event) => {
 
 });
 
-function GotoSearch(){
+function GotoSearch() {
   window.location.href = "#explore"
-  if(RelatedVideosList.length<1){
+  if (RelatedVideosList.length < 1) {
     getRelatedVideos()
   }
 }
 
 let getRelatedVideos = () => {
   // relatedvideos
-  console.log("start loading related >>..")
   if (GetUrlParams('v') != undefined || GetUrlParams('v') != null) {
 
     var url = '/relatedvideos/';
@@ -1196,15 +1206,13 @@ let LoadRelatedVideo = (VideosData) => {
   for (index = 0; index <= VideosData.length; index++) {
     let element = VideosData[index]
     try {
-      if(element!=undefined){
+      if (element != undefined) {
 
         element = element['video']
-        console.log(element['thumbnails'][element['thumbnails'].length-1]['url'])
-        // ${element['thumbnail'][(element['thumbnail'].length) - 1]['url']}
         videoStr += `<a href="/watch/?v=${element['videoId']}" title="${element['title']}" class="card m-1 pb-1 overflow-hidden videoWidth text-decoration-none" aria-hidden="true" ">
           
                       <div class="card position-relative">
-                      <img src="${element['thumbnails'][element['thumbnails'].length-1]['url']}" class="card-img-top position-relative" alt="...">
+                      <img src="${element['thumbnails'][element['thumbnails'].length - 1]['url']}" class="card-img-top position-relative" alt="...">
                       <span class="col-6 w-100 position-absolute top-0 left-0 mx-auto text-primary" style="color: #00fff2 !important;font-weight: 900;">${element['lengthText']}</span>
                       </div>
 
@@ -1216,7 +1224,7 @@ let LoadRelatedVideo = (VideosData) => {
                       </div>
                     </a>`
       }
-      SearchContentbox.innerHTML = SearchContentbox.innerHTML+=videoStr
+      SearchContentbox.innerHTML = SearchContentbox.innerHTML += videoStr
     }
     catch (error) {
       console.log(error)
@@ -1271,10 +1279,10 @@ function ShareNowLink(target) {
 
   let shareUrl = window.location.href
 
-  let whatslinkurl = 'whatsapp://send?text=' + PlayingSongTitle+" " + shareUrl
+  let whatslinkurl = 'whatsapp://send?text=' + PlayingSongTitle + " " + shareUrl
   let twitterrul = 'https://twitter.com/share?url=' + shareUrl
-  let facebookurl = 'https://www.facebook.com/sharer/sharer.php?u=' + PlayingSongTitle +" "+ shareUrl
-  let instagramurl = "https://www.instagram.com/?url=" + PlayingSongTitle+" " + shareUrl
+  let facebookurl = 'https://www.facebook.com/sharer/sharer.php?u=' + PlayingSongTitle + " " + shareUrl
+  let instagramurl = "https://www.instagram.com/?url=" + PlayingSongTitle + " " + shareUrl
   let mailurl = `mailto:?subject=${PlayingSongTitle}&body='${shareUrl}'`
 
 

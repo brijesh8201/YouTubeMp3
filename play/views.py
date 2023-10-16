@@ -253,6 +253,7 @@ def CreateQrCode(request):
         import segno,os
 
         data_url = request.GET.get("data_url").replace('__',"&")
+        
         print("the data url is : ",data_url)
         filepath = os.path.join(settings.BASE_DIR,'static','files','qrcode.png')
         
@@ -260,9 +261,8 @@ def CreateQrCode(request):
         qr = segno.make_qr(data_url)
         qr.save(filepath,
                 scale=8,
-                border=1,
-                
-        )
+                border=0,
+                )
         
         return redirect('/static/files/qrcode.png')
 
